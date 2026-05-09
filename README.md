@@ -233,18 +233,7 @@ Project 1 — Done: 6-layer agent
 Project 2 — Done: evaluation
   framework + approval gate
 Project 3 — Done: 4-agent
-  sequential pipeline + jurisdiction
-  + date context + 109 tests
+  sequential pipeline +
+  jurisdiction + date context + 109 tests
 
----
-
-## Inspiration
-
-Architecture and clause taxonomy
-inspired by the Atticus Project
-CUAD dataset
-(https://www.atticusprojectai.org)
-— 510 commercial contracts with
-13,000+ expert labels across 41
-clause types.
 ---
