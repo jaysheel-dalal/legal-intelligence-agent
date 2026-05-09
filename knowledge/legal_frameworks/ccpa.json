@@ -1,0 +1,71 @@
+{
+  "framework": "CCPA",
+  "description": "California Consumer Privacy Act — requirements for businesses regarding collection, use, disclosure, and consumer rights for personal information of California residents.",
+  "applies_to": ["data", "privacy", "personal information"],
+  "obligations": [
+    {
+      "id": "ccpa_001",
+      "title": "Right to Know and Access",
+      "description": "Businesses must provide consumers access to the categories and specific pieces of personal information collected, the purposes of collection, and third parties with whom it is shared.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_002",
+      "title": "Right to Delete",
+      "description": "Consumers can request deletion of personal information held by a business, subject to exceptions for security, legal compliance, or internal uses aligned with consumer consent.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_003",
+      "title": "Right to Correct Inaccurate Information",
+      "description": "Consumers have the right to request correction of inaccurate personal information maintained by a business.",
+      "severity": "HIGH",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_004",
+      "title": "Right to Opt-Out of Sale or Sharing",
+      "description": "Businesses must provide a clear opt-out mechanism for consumers to stop the sale or sharing of their personal information for cross-context behavioral advertising.",
+      "severity": "HIGH",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_005",
+      "title": "Service Provider Contract Requirements",
+      "description": "Contracts with service providers must restrict use of personal information to the business purpose, prohibit unauthorized disclosure, and require confidentiality obligations.",
+      "severity": "HIGH",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_006",
+      "title": "Data Breach Notification",
+      "description": "Businesses must notify affected California residents in the most expedient time possible — and no later than 60 days — when unencrypted personal information is breached.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_007",
+      "title": "Privacy Notice at Collection",
+      "description": "At or before collection of personal information businesses must disclose what categories are collected, the purposes of collection, and consumer rights.",
+      "severity": "HIGH",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_008",
+      "title": "Non-Discrimination for Exercising Rights",
+      "description": "Businesses cannot discriminate against consumers for exercising CCPA rights — including denying goods, charging different prices, or providing lower quality service.",
+      "severity": "HIGH",
+      "clause_types_affected": ["data", "privacy"]
+    },
+    {
+      "id": "ccpa_009",
+      "title": "Sensitive Personal Information Restrictions",
+      "description": "Extra protections apply to sensitive categories including SSN, financial data, health information, biometric data, and precise geolocation. Must offer opt-out of use.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["data", "privacy"]
+    }
+  ]
+}
+

@@ -1,0 +1,50 @@
+{
+  "contract_type": "contractor",
+  "required_clauses": [
+    {
+      "clause_type": "services",
+      "title": "Independent Contractor Services",
+      "description": "Defines deliverables, scope of work, and the contractor’s responsibilities to provide services independent of the hiring party’s control.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "confidentiality",
+      "title": "Confidentiality and Use Restrictions",
+      "description": "Protects non-public information provided to the contractor and limits use to performing the services.",
+      "required": true,
+      "severity_if_missing": "CRITICAL"
+    },
+    {
+      "clause_type": "IP",
+      "title": "Ownership and License for Work Product",
+      "description": "Allocates rights in deliverables and any work product, including assignment/licensing of IP generated during the engagement.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "payment",
+      "title": "Fees and Invoicing",
+      "description": "Specifies the fee structure, invoicing requirements, payment timing, and any dispute/withholding procedures.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "termination",
+      "title": "Termination for Convenience and Cause",
+      "description": "Provides grounds for termination and notice/cure periods, including obligations that survive termination.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    }
+  ],
+  "optional_clauses": [
+    {
+      "clause_type": "non_solicitation",
+      "title": "Non-Solicitation",
+      "description": "May restrict solicitation of the hiring party’s personnel where enforceable.",
+      "required": false,
+      "severity_if_missing": "LOW"
+    }
+  ]
+}
+

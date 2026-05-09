@@ -1,0 +1,72 @@
+{
+  "contract_type": "Employment Agreement",
+  "version": "1.0.0",
+  "description": "Employment contracts covering full-time, part-time, and executive employment relationships",
+  "required_clauses": [
+    {
+      "clause_type": "compensation_and_benefits",
+      "severity": "CRITICAL",
+      "description": "Defines salary, bonus, equity, benefits, and payment schedule"
+    },
+    {
+      "clause_type": "ip_assignment",
+      "severity": "CRITICAL",
+      "description": "Assigns all work product and inventions created during employment to the employer"
+    },
+    {
+      "clause_type": "confidentiality",
+      "severity": "CRITICAL",
+      "description": "Prohibits disclosure of trade secrets and confidential business information during and after employment"
+    },
+    {
+      "clause_type": "termination",
+      "severity": "HIGH",
+      "description": "Defines termination triggers, notice periods, severance, and at-will provisions"
+    },
+    {
+      "clause_type": "non_compete",
+      "severity": "HIGH",
+      "description": "Restricts employee from working for competitors during and after employment — enforceability varies by state"
+    },
+    {
+      "clause_type": "non_solicitation",
+      "severity": "HIGH",
+      "description": "Restricts employee from soliciting company clients, customers, or employees after departure"
+    },
+    {
+      "clause_type": "duties_and_responsibilities",
+      "severity": "HIGH",
+      "description": "Defines job title, reporting structure, and scope of responsibilities"
+    },
+    {
+      "clause_type": "dispute_resolution",
+      "severity": "MEDIUM",
+      "description": "Defines how disputes are resolved — arbitration, mediation, or litigation"
+    },
+    {
+      "clause_type": "governing_law",
+      "severity": "LOW",
+      "description": "Specifies which state law governs the employment relationship"
+    },
+    {
+      "clause_type": "entire_agreement",
+      "severity": "LOW",
+      "description": "States this agreement supersedes all prior offers, negotiations, and understandings"
+    }
+  ],
+  "optional_clauses": [
+    {
+      "clause_type": "severance",
+      "description": "Defines severance pay upon termination without cause"
+    },
+    {
+      "clause_type": "equity_vesting",
+      "description": "Defines stock option or RSU vesting schedule"
+    },
+    {
+      "clause_type": "remote_work_policy",
+      "description": "Defines remote work rights and expectations"
+    }
+  ]
+}
+

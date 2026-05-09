@@ -1,0 +1,93 @@
+{
+  "contract_type": "NDA",
+  "required_clauses": [
+    {
+      "clause_type": "confidentiality",
+      "title": "Confidentiality Obligation",
+      "description": "Requires the Receiving Party to protect and not disclose Confidential Information except as permitted, and to use it only for the stated purpose.",
+      "required": true,
+      "severity_if_missing": "CRITICAL"
+    },
+    {
+      "clause_type": "term",
+      "title": "Term and Survival",
+      "description": "Defines the agreement duration and which confidentiality obligations survive termination. Standard NDA term is 2-5 years.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "governing_law",
+      "title": "Governing Law",
+      "description": "Specifies which state law governs the agreement and jurisdiction for disputes.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "return_of_materials",
+      "title": "Return or Destruction of Materials",
+      "description": "Requires prompt return or destruction of Confidential Information upon request or termination, often including written certification.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "confidentiality",
+      "title": "Exclusions from Confidentiality",
+      "description": "Carves out information that is publicly available, already known to recipient, independently developed, or disclosed by a third party without restriction.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "permitted_disclosures",
+      "title": "Permitted Disclosures",
+      "description": "Defines who within the receiving party may access confidential information (e.g., employees, advisors, legal counsel) and under what conditions.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "no_license_grant",
+      "title": "No License or Rights Granted",
+      "description": "Clarifies that disclosure of confidential information does not grant any license, title, or intellectual property rights to the receiving party.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "remedies",
+      "title": "Remedies for Breach",
+      "description": "States that breach may cause irreparable harm entitling the disclosing party to seek injunctive relief without posting bond, in addition to other remedies.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "governing_law",
+      "title": "Dispute Resolution",
+      "description": "Defines how disputes will be resolved — negotiation, mediation, or arbitration — and which courts have jurisdiction.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "return_of_materials",
+      "title": "Return or Destruction",
+      "description": "Requires return or destruction of confidential information when the agreement ends.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    }
+
+  ],
+  "optional_clauses": [
+    {
+      "clause_type": "non_solicitation",
+      "title": "Non-Solicitation",
+      "description": "Prevents parties from soliciting each other's employees during the NDA term.",
+      "required": false,
+      "severity_if_missing": "LOW"
+    },
+    {
+      "clause_type": "entire_agreement",
+      "title": "Entire Agreement",
+      "description": "States this agreement supersedes all prior discussions and constitutes the entire agreement between the parties.",
+      "required": false,
+      "severity_if_missing": "LOW"
+    }
+  ]
+}
+

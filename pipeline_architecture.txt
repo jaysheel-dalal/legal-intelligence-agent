@@ -1,0 +1,222 @@
+LEGAL INTELLIGENCE AGENT — END-TO-END PIPELINE
+════════════════════════════════════════════════════════════════════════
+
+┌──────────────────────────── USER INPUT ────────────────────────────┐
+│                                                                     │
+│   Natural Language Query                                           │
+│   "What happens if I terminate this vendor agreement early?"       │
+│                                                                     │
+│   Contract File (optional)                                         │
+│   vendor_agreement.pdf / .docx / .txt                              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ raw query + file path
+
+┌──────────────────────── STEP 1 · Document Parser ──────────────────┐
+│ document_parser.py                                                  │
+│                                                                     │
+│ If file provided:                                                   │
+│   → Load file (PDF / DOCX / TXT)                                   │
+│   → Extract raw text                                               │
+│   → Detect contract type (NDA / vendor / SaaS / employment)       │
+│   → Split into clause-level chunks                                 │
+│                                                                     │
+│ If no file:                                                         │
+│   → Skip to Step 2 with empty chunks                               │
+│                                                                     │
+│ Output: { contract_type, chunks[{text, clause_type,                │
+│           position, char_count}] }                                 │
+│                                                                     │
+│ Errors: ParseError · UnsupportedFileTypeError                      │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ chunks: list[{text, clause_type, position, char_count}]
+
+┌─────────────────── STEP 2 · Query Intent Classifier ───────────────┐
+│ query_intent_classifier.py                                          │
+│                                                                     │
+│ → Detect if query is vague (1-2 words → ask for clarification)    │
+│ → Classify legal intent from query:                                │
+│     termination · breach · payment · data · IP                    │
+│     employment · liability · confidentiality                       │
+│ → Extract entities:                                                │
+│     time_references · monetary_amounts                             │
+│     party_references · contract_type                               │
+│ → Assign confidence score (0.0 to 1.0)                            │
+│                                                                     │
+│ If vague → return suggested topics · stop pipeline                 │
+│                                                                     │
+│ Output: { intent, confidence, entities,                            │
+│           clarification_needed, contract_type }                    │
+│                                                                     │
+│ Errors: ClassificationError                                         │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ {intent, confidence, entities, clarification_needed}
+
+┌──────────────────── STEP 3 · Analysis Agent ───────────────────────┐
+│ agents/analysis_agent.py                                            │
+│                                                                     │
+│ → Takes clause chunks from Parser Agent                             │
+│ → Claude (claude-sonnet-4-5): analyze risk, relevance, triggered    │
+│ → Claude: translate to plain English (per clause)                  │
+│ → Restores parser clause_type; matches by source position         │
+│                                                                     │
+│ Output: analyzed + translated clauses with risk_level,            │
+│         confidence, plain_english, source_position                   │
+│                                                                     │
+│ Errors: surfaced as empty/failed analysis result                    │
+└─────────────────────────────────────────────────────────────────────┘
+
+  STEP 3 · Analysis Agent
+      ↓
+  STEP 4 · Gap Agent
+
+┌──────────────────── STEP 4 · Gap Agent ────────────────────────────┐
+│ agents/gap_agent.py · knowledge_base.py                             │
+│                                                                     │
+│ → Load legal frameworks (6) + contract templates (7):              │
+│     templates include ip_license.json                              │
+│ → Compare found clause types vs required template for contract     │
+│ → Emit missing clauses with severity                               │
+│                                                                     │
+│ Output: { missing_clauses, gap_count, ... }                        │
+│                                                                     │
+│ Errors: KnowledgeBaseError                                          │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ missing_clauses + analysis context
+
+╔══════════════════ STEP 5 · Agent Core ═════════════════════════════╗
+║ agent_core.py  ·  4 Sequential LLM Calls                           ║
+║                                                                     ║
+║  [LLM Call 1]  analyze(chunks, query, intent)                      ║
+║    → Read each retrieved clause                                     ║
+║    → Detect legal meaning and obligations                          ║
+║    → Assign risk level: CRITICAL / HIGH / MEDIUM / LOW           ║
+║    → Flag triggered: True if relevant to query                     ║
+║    → Record source_position                                        ║
+║                                                                     ║
+║  [LLM Call 2]  translate(analyzed)                                 ║
+║    → Rewrite every clause in plain English                         ║
+║    → Remove jargon: hereinafter · pursuant ·                      ║
+║      notwithstanding · whereas                                     ║
+║    → Add plain_english field to each clause                        ║
+║                                                                     ║
+║  [LLM Call 3]  gap_check(analyzed, contract_type)                  ║
+║    → Compare found clauses against Knowledge Base template         ║
+║    → Identify missing required clauses                             ║
+║    → Assign severity to each gap: CRITICAL / HIGH / MEDIUM       ║
+║                                                                     ║
+║  [LLM Call 4]  validate(analyzed, translated, gaps)                ║
+║    → Remove any result with confidence < 0.6                       ║
+║    → Enforce source_position on every clause                       ║
+║    → Produce final validated output                                ║
+║                                                                     ║
+║ Output: { query, intent, contract_type, analyzed_clauses,          ║
+║           missing_clauses, summary, total_clauses_found,           ║
+║           total_missing, critical_count, high_count }              ║
+║                                                                     ║
+║ Errors: AgentError (empty chunks or no llm_client)                 ║
+╚═════════════════════════════════════════════════════════════════════╝
+  ↓ {analyzed_clauses, missing_clauses, summary, counts}
+
+┌──────────────────── STEP 6 · Output Report ────────────────────────┐
+│ output_report.py                                                    │
+│                                                                     │
+│ → Sort clauses by risk: CRITICAL → HIGH → MEDIUM → LOW            │
+│ → Sort missing clauses by severity                                  │
+│ → Generate report in requested format:                             │
+│                                                                     │
+│   dict     → structured Python dict (API ready)                   │
+│   text     → plain text with ASCII sections                        │
+│   markdown → formatted with ## headers + risk emojis              │
+│              🔴 CRITICAL  🟠 HIGH  🟡 MEDIUM  🟢 LOW              │
+│                                                                     │
+│ → Append disclaimer to every output:                               │
+│   "This is legal information, not legal advice.                    │
+│    Consult a qualified lawyer for decisions."                      │
+│                                                                     │
+│ Errors: ReportError                                                 │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ formatted report (dict / text / markdown)
+
+┌──────────────────────────── USER OUTPUT ───────────────────────────┐
+│                                                                     │
+│  LEGAL INTELLIGENCE AGENT — CLAUSE REPORT                         │
+│  ═══════════════════════════════════════                           │
+│  Query:    "What happens if I terminate early?"                    │
+│  Intent:   termination  ·  Confidence: 0.91                       │
+│  Contract: vendor  ·  Clauses found: 4  ·  Missing: 2             │
+│                                                                     │
+│  🔴 CRITICAL — termination                                         │
+│     You must give 30 days written notice before                    │
+│     ending this contract.                                          │
+│     Source: position 2  ·  Triggered: Yes                         │
+│                                                                     │
+│  🟠 HIGH — liability                                               │
+│     The vendor is not responsible for indirect damages.            │
+│     Source: position 3  ·  Triggered: No                          │
+│                                                                     │
+│  MISSING CLAUSES                                                   │
+│  ⚠ data_protection  [CRITICAL]  No data protection clause.        │
+│  ⚠ dispute_resolution  [HIGH]   No dispute resolution clause.     │
+│                                                                     │
+│  DISCLAIMER: This is legal information, not legal advice.         │
+│  Consult a qualified lawyer for decisions.                         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ saved to logs/
+
+┌────────────────────────────── RUN LOG ─────────────────────────────┐
+│ logs/run_YYYYMMDD_HHMMSS.jsonl                                      │
+│                                                                     │
+│ {                                                                   │
+│   "timestamp": "2025-01-15T10:23:45",                              │
+│   "prompt_version": "v1.0.0",                                      │
+│   "query": "What happens if I terminate early?",                   │
+│   "contract_file": "vendor_agreement.pdf",                         │
+│   "contract_type": "vendor",                                       │
+│   "intent": "termination",                                         │
+│   "confidence": 0.91,                                              │
+│   "latency_ms": 2340,                                              │
+│   "clauses_found": 4,                                              │
+│   "missing_clauses": 2,                                            │
+│   "critical_count": 1,                                             │
+│   "prompt_version": "v1.0.0"                                       │
+│ }                                                                   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ pipeline end
+
+════════════════════════════════════════════════════════════════════════
+PIPELINE SUMMARY
+════════════════════════════════════════════════════════════════════════
+
+  Total steps:      6 (+ input + output + logging)
+  LLM calls:        4 (Analysis translate/analyze, Gap, Report path)
+  Execution order:  sequential — Analysis Agent → Gap Agent →
+                    Report Agent (documented pipeline)
+  Pure code steps:  Document Parser · Semantic Embedder ·
+                    Query Intent Classifier · Knowledge Base
+  Formats out:      dict / text / markdown
+  Jurisdiction:     CCPA (US)  · GDPR planned v1.1.0
+  Tests:            109 / 109 passing
+  Evaluation:      19 / 20 (95%)
+  Model:           claude-sonnet-4-5
+  Disclaimer:       On every output — always
+
+════════════════════════════════════════════════════════════════════════
+ERROR HANDLING
+════════════════════════════════════════════════════════════════════════
+
+  ParseError              → File corrupt / empty / unsupported type
+  UnsupportedFileTypeError → File extension not PDF/DOCX/TXT
+  EmbeddingError          → Embedding call failed / empty chunks
+  ClassificationError     → Query is None or empty string
+  AgentError              → Empty chunks or no llm_client
+  KnowledgeBaseError      → Missing dir / bad JSON / unknown type
+  ReportError             → None result / invalid format /
+                            missing required keys
+
+════════════════════════════════════════════════════════════════════════
+109/109 tests passing · sequential 4-agent pipeline · eval 19/20 (95%) ·
+claude-sonnet-4-5 · jurisdiction: CCPA (US)
+════════════════════════════════════════════════════════════════════════

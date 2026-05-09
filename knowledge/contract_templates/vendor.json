@@ -1,0 +1,105 @@
+{
+  "contract_type": "vendor",
+  "required_clauses": [
+    {
+      "clause_type": "services",
+      "title": "Services and Statement of Work",
+      "description": "Describes the scope of services, deliverables, and any Statement of Work or exhibits that control the engagement.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "payment",
+      "title": "Fees, Invoicing, and Payment Terms",
+      "description": "Specifies fee amounts or pricing model, invoicing cadence, payment due date, dispute procedures, and late-payment consequences.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "termination",
+      "title": "Termination for Cause and Convenience",
+      "description": "Provides notice periods, cure timelines for material breach, and survival of key provisions after termination.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "IP",
+      "title": "Intellectual Property Rights Allocation",
+      "description": "Allocates ownership of background IP and work product, including licenses needed to provide and use deliverables.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "data_protection",
+      "title": "Data Protection and Privacy",
+      "description": "Requires vendor to comply with applicable data protection laws, restricts use of customer data, and defines breach notification obligations.",
+      "required": true,
+      "severity_if_missing": "CRITICAL"
+    },
+    {
+      "clause_type": "indemnification",
+      "title": "Indemnification",
+      "description": "Defines each party's obligation to defend and hold harmless the other from third-party claims arising from their actions, negligence, or breach.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "payment_terms",
+      "title": "Payment Terms",
+      "description": "Defines invoicing cadence, due dates, accepted payment methods, and consequences for non-payment.",
+      "required": true,
+      "severity_if_missing": "CRITICAL"
+    },
+    {
+      "clause_type": "delivery_obligations",
+      "title": "Delivery Obligations",
+      "description": "Defines delivery timelines, acceptance criteria, and obligations for delays or failures to deliver.",
+      "required": true,
+      "severity_if_missing": "CRITICAL"
+    },
+    {
+      "clause_type": "warranties",
+      "title": "Warranties",
+      "description": "Defines warranties for goods/services, warranty period, and remedies for breach.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "limitation_of_liability",
+      "title": "Limitation of Liability",
+      "description": "Caps each party's liability and excludes certain categories of damages subject to carve-outs.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    },
+    {
+      "clause_type": "confidentiality",
+      "title": "Confidentiality",
+      "description": "Protects non-public and sensitive information exchanged under the agreement.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "governing_law",
+      "title": "Governing Law",
+      "description": "Specifies the governing jurisdiction and venue for dispute resolution.",
+      "required": true,
+      "severity_if_missing": "LOW"
+    },
+    {
+      "clause_type": "force_majeure",
+      "title": "Force Majeure",
+      "description": "Excuses performance delays caused by events outside reasonable control.",
+      "required": true,
+      "severity_if_missing": "LOW"
+    },
+    {
+      "clause_type": "dispute_resolution",
+      "title": "Dispute Resolution",
+      "description": "Defines procedures for resolving disputes, including negotiation, mediation, arbitration, or court.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    }
+  ],
+  "optional_clauses": []
+}
+

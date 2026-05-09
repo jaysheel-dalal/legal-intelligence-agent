@@ -1,0 +1,36 @@
+{
+  "framework": "payment_liability",
+  "description": "Payment and liability legal reference covering invoicing and payment terms, late-payment consequences, and limitations of liability and indemnification concepts.",
+  "applies_to": ["payment", "liability", "damages", "risk allocation"],
+  "obligations": [
+    {
+      "id": "pay_001",
+      "title": "Invoice, Payment Timing, and Late Fees",
+      "description": "Specify when invoices are due, how disputes are handled, and what happens with late payments (e.g., interest or service suspension subject to law and agreement).",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["payment", "liability"]
+    },
+    {
+      "id": "pay_002",
+      "title": "Limitation of Liability",
+      "description": "Define categories of damages excluded (e.g., consequential damages) and cap total liability, with carve-outs for specific liabilities if intended.",
+      "severity": "HIGH",
+      "clause_types_affected": ["liability", "payment"]
+    },
+    {
+      "id": "pay_003",
+      "title": "Indemnification for Third-Party Claims",
+      "description": "Provide an indemnity mechanism and process for third-party claims, often including control of defense and allocation of settlement decisions.",
+      "severity": "HIGH",
+      "clause_types_affected": ["liability", "IP"]
+    },
+    {
+      "id": "pay_004",
+      "title": "Remedies and Allocation Consistency",
+      "description": "Align remedies for breach with liability limits and define any exceptions that materially change the economic risk allocation.",
+      "severity": "MEDIUM",
+      "clause_types_affected": ["remedies", "liability"]
+    }
+  ]
+}
+

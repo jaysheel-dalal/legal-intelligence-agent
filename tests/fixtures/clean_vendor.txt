@@ -1,0 +1,22 @@
+VENDOR SERVICES AGREEMENT
+
+This Vendor Services Agreement (the "Agreement") is entered into by and between the Vendor and the Customer.
+
+1. SERVICES.
+The Vendor shall provide the Services described in the applicable Statement of Work.
+
+2. FEES AND PAYMENT.
+Customer shall pay all fees in accordance with the invoicing schedule. Invoices are due within thirty (30) days of receipt. Late payments may accrue interest at a rate of 1.5% per month.
+
+3. INTELLECTUAL PROPERTY.
+Each Party retains all right, title, and interest in and to its Background Intellectual Property. For avoidance of doubt, Vendor owns all rights in the Services and any deliverables, except as expressly transferred in writing.
+
+4. LIMITATION OF LIABILITY.
+To the maximum extent permitted by law, neither Party shall be liable for indirect, incidental, special, or consequential damages. Each Party's total liability shall not exceed the fees paid or payable under this Agreement during the three (3) months preceding the event giving rise to the claim.
+
+5. INDEMNIFICATION.
+Vendor will indemnify Customer for third-party claims alleging that the Services infringe intellectual property rights.
+
+6. TERMINATION.
+Either Party may terminate for material breach upon thirty (30) days' written notice and failure to cure.
+

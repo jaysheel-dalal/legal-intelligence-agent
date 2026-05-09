@@ -1,0 +1,181 @@
+LEGAL INTELLIGENCE AGENT — SYSTEM ARCHITECTURE v1.0
+════════════════════════════════════════════════════
+
+┌─────────────────── LAYER 1 · Document Parser ──────────────────────┐
+│ File:    legal_intelligence_agent/document_parser.py               │
+│ Classes: DocumentParser · ParseError · UnsupportedFileTypeError    │
+│                                                                     │
+│ Methods:                                                            │
+│   parse_document(document_path, document_text)  → dict             │
+│   parse(document_path, document_text, query)    → dict             │
+│   _load_text_from_path()                        → str              │
+│   _detect_contract_type()                       → str              │
+│   _split_into_clause_chunks()                   → list             │
+│   _ground_clause_query()                        → tuple            │
+│                                                                     │
+│ Input:   PDF / DOCX / TXT / natural language query                 │
+│ Output:  { contract_type, chunks[{text, clause_type,               │
+│            position, char_count}] }                                 │
+│ Errors:  ParseError · UnsupportedFileTypeError                     │
+│ Tests:   17 passing                                                 │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ chunks: list[{text, clause_type, position, char_count}]
+
+┌─────────────────── LAYER 2 · Semantic Embedder ────────────────────┐
+│ File:    legal_intelligence_agent/semantic_embedder.py             │
+│ Classes: SemanticEmbedder · EmbeddingError                         │
+│                                                                     │
+│ Methods:                                                            │
+│   embed_chunks(chunks)              → None (builds FAISS index)    │
+│   retrieve(query, top_k=3)          → list[dict]                   │
+│   reset()                           → None                         │
+│   _embed_text(text)                 → np.ndarray shape(384,)       │
+│   _normalize_rows(vectors)          → np.ndarray                   │
+│                                                                     │
+│ Tech:    FAISS IndexFlatIP · cosine similarity · 384-dim vectors   │
+│ Input:   clause chunks from Document Parser                        │
+│ Output:  top-k chunks with similarity_score added                  │
+│ Errors:  EmbeddingError                                             │
+│ Tests:   11 passing                                                 │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ top-k chunks with similarity_score
+
+┌──────────────── LAYER 3 · Query Intent Classifier ─────────────────┐
+│ File:    legal_intelligence_agent/query_intent_classifier.py       │
+│ Classes: QueryIntentClassifier · ClassificationError               │
+│                                                                     │
+│ Methods:                                                            │
+│   classify(query)                   → dict                         │
+│   is_vague(query)                   → bool                         │
+│   extract_entities(query)           → dict                         │
+│                                                                     │
+│ Intents: termination · breach · payment · data · IP                │
+│          employment · liability · confidentiality                  │
+│ Entities: time_references · monetary_amounts                       │
+│           party_references · contract_type                         │
+│ Input:   raw natural language query string                         │
+│ Output:  { clarification_needed, intent, confidence,               │
+│            contract_type, entities, suggested_topics,              │
+│            raw_query }                                              │
+│ Errors:  ClassificationError (None or empty query)                 │
+│ Tests:   25 passing                                                 │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ {intent, confidence, entities, clarification_needed}
+
+╔══════════════════ LAYER 4 · Agent Core ════════════════════════════╗
+║ File:    legal_intelligence_agent/agent_core.py                    ║
+║ Classes: AgentCore · AgentError                                    ║
+║                                                                     ║
+║  [LLM Call 1]  analyze(chunks, query, intent)  → list[dict]       ║
+║    Risk levels: CRITICAL / HIGH / MEDIUM / LOW                     ║
+║    Returns: risk_level, legal_meaning, triggered, source_position  ║
+║                                                                     ║
+║  [LLM Call 2]  translate(analyzed)             → list[dict]       ║
+║    Adds: plain_english field                                        ║
+║    Blocks: hereinafter · pursuant · notwithstanding · whereas      ║
+║                                                                     ║
+║  [LLM Call 3]  gap_check(analyzed, contract_type) → list[dict]    ║
+║    Missing clauses vs Knowledge Base standard template             ║
+║                                                                     ║
+║  [LLM Call 4]  validate(analyzed, translated, gaps) → dict        ║
+║    Removes: confidence < 0.6                                        ║
+║    Enforces: source_position on every clause                       ║
+║                                                                     ║
+║  run(query, intent, chunks, contract_type)     → dict              ║
+║    Orchestrates all 4 calls in sequence                            ║
+║                                                                     ║
+║ Input:   retrieved chunks + classified intent                      ║
+║ Output:  { query, intent, contract_type, analyzed_clauses,         ║
+║            missing_clauses, summary, total_clauses_found,          ║
+║            total_missing, critical_count, high_count }             ║
+║ Errors:  AgentError (empty chunks or no llm_client)                ║
+║ Tests:   16 passing                                                 ║
+╚═════════════════════════════════════════════════════════════════════╝
+  ↓ {analyzed_clauses, missing_clauses, summary, counts}
+
+┌─────────────────── LAYER 5 · Knowledge Base ───────────────────────┐
+│ File:    legal_intelligence_agent/knowledge_base.py                │
+│ Classes: KnowledgeBase · KnowledgeBaseError                        │
+│                                                                     │
+│ Methods:                                                            │
+│   get_required_clauses(contract_type)           → list[dict]       │
+│   get_framework(framework_name)                 → dict             │
+│   get_clause_standard(clause_type)              → dict             │
+│   list_contract_types()                         → list[str]        │
+│   list_frameworks()                             → list[str]        │
+│   check_gaps(found_clause_types, contract_type) → list[dict]       │
+│                                                                     │
+│ Frameworks (6): ccpa · employment · ip_law · contract_law          │
+│                 nda_law · payment_liability                        │
+│ Templates  (7): nda · vendor · employment · contractor             │
+│                 saas · partnership · ip_license                   │
+│                                                                     │
+│ Input:   contract_type string or framework_name string             │
+│ Output:  required clauses or framework obligations                 │
+│ Errors:  KnowledgeBaseError (missing dir, bad JSON, unknown type)  │
+│ Tests:   17 passing                                                 │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ {required_clauses, framework_obligations} → consumed by gap_check
+
+┌──────────────── LAYER 6 · Output Report ───────────────────────────┐
+│ File:    legal_intelligence_agent/output_report.py                 │
+│ Classes: OutputReport · ReportError                                │
+│                                                                     │
+│ Methods:                                                            │
+│   generate(agent_result, format)    → any                          │
+│   to_dict(agent_result)             → dict                         │
+│   to_text(agent_result)             → str                          │
+│   to_markdown(agent_result)         → str                          │
+│                                                                     │
+│ Formats:   dict / text / markdown                                  │
+│ Risk sort: CRITICAL → HIGH → MEDIUM → LOW                          │
+│ Disclaimer: "This is legal information, not legal advice.          │
+│              Consult a qualified lawyer for decisions."            │
+│ Status:  complete                                                  │
+│ Tests:   23 passing                                                 │
+└─────────────────────────────────────────────────────────────────────┘
+  ↓ formatted report (dict / text / markdown)
+
+════════════════════════════════════════════════════
+DATA FLOW SUMMARY
+════════════════════════════════════════════════════
+
+  Parser Agent
+      ↓
+  Analysis Agent
+      ↓
+  Gap Agent
+      ↓
+  Report Agent
+
+  Sequential pipeline: each agent finishes before the
+  next begins.
+
+════════════════════════════════════════════════════
+TEST SUITE
+════════════════════════════════════════════════════
+
+  Layer 1 — Document Parser           17 tests   PASSING
+  Layer 2 — Semantic Embedder         11 tests   PASSING
+  Layer 3 — Query Intent Classifier   25 tests   PASSING
+  Layer 4 — Agent Core                16 tests   PASSING
+  Layer 5 — Knowledge Base            17 tests   PASSING
+  Layer 6 — Output Report             23 tests   PASSING
+  ──────────────────────────────────────────────────────
+  Total                              109 tests   PASSING
+
+════════════════════════════════════════════════════
+SUPPORTING INFRASTRUCTURE
+════════════════════════════════════════════════════
+
+  Versioned Prompts   /prompts/v1.0.0_system.txt
+  Test Suite          pytest tests/ → 109 passing
+  Run Logs            /logs/ JSONL format
+  Knowledge Dir       /knowledge/ (6 frameworks, 7 templates)
+  Premortem           10 failure modes documented
+  Jurisdiction        CCPA (US) · GDPR planned v1.1.0
+
+════════════════════════════════════════════════════
+109/109 tests passing · 6 layers complete
+jurisdiction: CCPA (US) v1.0
+════════════════════════════════════════════════════

@@ -1,0 +1,36 @@
+{
+  "framework": "nda_law",
+  "description": "Nondisclosure agreement legal reference covering confidentiality duties, exclusions, permissible disclosures, compelled disclosure, and remedies.",
+  "applies_to": ["confidentiality", "NDA", "trade secrets"],
+  "obligations": [
+    {
+      "id": "nda_001",
+      "title": "Define Confidential Information",
+      "description": "Clearly define what constitutes Confidential Information and ensure the definition aligns with the parties' permitted purposes.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["confidentiality", "NDA"]
+    },
+    {
+      "id": "nda_002",
+      "title": "Exclusions and Carve-Outs",
+      "description": "Exclude information that is publicly available, already known, or independently developed without use of the Confidential Information.",
+      "severity": "HIGH",
+      "clause_types_affected": ["exclusions", "confidentiality"]
+    },
+    {
+      "id": "nda_003",
+      "title": "Return/Destruction of Materials",
+      "description": "Require prompt return or destruction of Confidential Information upon termination or written request, including certification where appropriate.",
+      "severity": "HIGH",
+      "clause_types_affected": ["return_of_materials", "confidentiality"]
+    },
+    {
+      "id": "nda_004",
+      "title": "Remedies for Breach",
+      "description": "Provide that breaches may cause irreparable harm and allow equitable relief, subject to standard legal limitations.",
+      "severity": "MEDIUM",
+      "clause_types_affected": ["remedies", "liability", "confidentiality"]
+    }
+  ]
+}
+

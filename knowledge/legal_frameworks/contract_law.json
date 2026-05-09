@@ -1,0 +1,29 @@
+{
+  "framework": "contract_law",
+  "description": "General contract-law reference addressing formation, interpretation, and the enforceability of routine contractual terms.",
+  "applies_to": ["contract law", "general"],
+  "obligations": [
+    {
+      "id": "cl_001",
+      "title": "Clarity of Obligations and Definitions",
+      "description": "Use defined terms and clear obligation language to reduce ambiguity and support consistent contract interpretation.",
+      "severity": "HIGH",
+      "clause_types_affected": ["general"]
+    },
+    {
+      "id": "cl_002",
+      "title": "Notice and Cure Mechanics",
+      "description": "Termination and breach remedies commonly require explicit notice, cure periods, and defined methods of delivery to support enforceability.",
+      "severity": "MEDIUM",
+      "clause_types_affected": ["termination", "breach", "liability"]
+    },
+    {
+      "id": "cl_003",
+      "title": "Allocation of Remedies",
+      "description": "Limit or define remedies and damages where appropriate, including how injunctive relief is handled for confidentiality breaches.",
+      "severity": "MEDIUM",
+      "clause_types_affected": ["liability", "confidentiality", "remedies"]
+    }
+  ]
+}
+

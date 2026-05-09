@@ -1,0 +1,50 @@
+{
+  "contract_type": "partnership",
+  "required_clauses": [
+    {
+      "clause_type": "capital_contributions",
+      "title": "Capital Contributions and Funding",
+      "description": "Defines initial and ongoing capital contributions by partners, including valuation, timing, and consequences of non-payment.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "profit_sharing",
+      "title": "Profit Sharing and Distributions",
+      "description": "Sets how profits and losses are allocated among partners and when distributions occur.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "governance",
+      "title": "Governance and Decision Making",
+      "description": "Describes how decisions are made, voting rights, authority of managers, and resolution of deadlocks.",
+      "required": true,
+      "severity_if_missing": "MEDIUM"
+    },
+    {
+      "clause_type": "admission_of_partners",
+      "title": "Admission of New Partners",
+      "description": "Sets criteria and procedures for adding new partners, including approvals and documentation requirements.",
+      "required": true,
+      "severity_if_missing": "LOW"
+    },
+    {
+      "clause_type": "termination",
+      "title": "Dissolution and Exit",
+      "description": "Defines dissolution triggers, wind-down process, and how remaining assets and obligations are handled.",
+      "required": true,
+      "severity_if_missing": "HIGH"
+    }
+  ],
+  "optional_clauses": [
+    {
+      "clause_type": "non_solicitation",
+      "title": "Non-Solicitation (Optional)",
+      "description": "May include restrictions on solicitation of partners’ personnel, subject to enforceability.",
+      "required": false,
+      "severity_if_missing": "LOW"
+    }
+  ]
+}
+

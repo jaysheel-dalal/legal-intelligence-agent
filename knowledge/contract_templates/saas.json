@@ -1,0 +1,77 @@
+{
+  "contract_type": "SaaS Agreement",
+  "version": "1.0.0",
+  "description": "Software as a Service subscription agreements covering cloud software access and usage",
+  "required_clauses": [
+    {
+      "clause_type": "subscription_and_fees",
+      "severity": "CRITICAL",
+      "description": "Defines subscription tiers, pricing, billing cycle, and fee escalation terms"
+    },
+    {
+      "clause_type": "data_ownership",
+      "severity": "CRITICAL",
+      "description": "Defines who owns customer data, how it is used, and what happens to it upon termination"
+    },
+    {
+      "clause_type": "service_level_agreement",
+      "severity": "CRITICAL",
+      "description": "Defines uptime guarantees, performance standards, and remedies for service failures"
+    },
+    {
+      "clause_type": "data_security",
+      "severity": "HIGH",
+      "description": "Defines security standards, breach notification obligations, and compliance requirements like SOC2 or ISO27001"
+    },
+    {
+      "clause_type": "license_to_use",
+      "severity": "HIGH",
+      "description": "Grants customer a limited non-exclusive license to access and use the software"
+    },
+    {
+      "clause_type": "acceptable_use_policy",
+      "severity": "HIGH",
+      "description": "Defines prohibited uses of the software and consequences for violations"
+    },
+    {
+      "clause_type": "limitation_of_liability",
+      "severity": "HIGH",
+      "description": "Caps vendor liability — typically limited to fees paid in the prior 12 months"
+    },
+    {
+      "clause_type": "term_and_renewal",
+      "severity": "HIGH",
+      "description": "Defines subscription term, auto-renewal conditions, and cancellation notice periods"
+    },
+    {
+      "clause_type": "data_portability",
+      "severity": "MEDIUM",
+      "description": "Defines customer's right to export data and the format and timeline for export"
+    },
+    {
+      "clause_type": "confidentiality",
+      "severity": "MEDIUM",
+      "description": "Protects confidential information shared between vendor and customer"
+    },
+    {
+      "clause_type": "governing_law",
+      "severity": "LOW",
+      "description": "Specifies which jurisdiction's law governs the agreement"
+    }
+  ],
+  "optional_clauses": [
+    {
+      "clause_type": "gdpr_compliance",
+      "description": "Data processing addendum for EU personal data"
+    },
+    {
+      "clause_type": "multi_tenant_isolation",
+      "description": "Defines data isolation between customers"
+    },
+    {
+      "clause_type": "disaster_recovery",
+      "description": "Defines backup and recovery procedures and RTO/RPO"
+    }
+  ]
+}
+

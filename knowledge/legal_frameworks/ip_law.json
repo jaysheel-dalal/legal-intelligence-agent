@@ -1,0 +1,36 @@
+{
+  "framework": "ip_law",
+  "description": "Intellectual property law reference covering ownership, licensing, copyright, trade secrets, and allocation of IP risk in technology and services agreements.",
+  "applies_to": ["IP", "technology", "confidentiality", "ownership"],
+  "obligations": [
+    {
+      "id": "ip_001",
+      "title": "Ownership and Assignment of Work Product",
+      "description": "Define whether new inventions, derivative works, and work product are assigned to the customer or retained by the developer, and specify the scope of assignment.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["IP", "employment", "vendor"]
+    },
+    {
+      "id": "ip_002",
+      "title": "License Scope for Background IP",
+      "description": "If either party provides background IP, define the license scope needed to perform the agreement (e.g., internal use, sublicensing limits, territory, term).",
+      "severity": "HIGH",
+      "clause_types_affected": ["IP", "vendor", "confidentiality"]
+    },
+    {
+      "id": "ip_003",
+      "title": "Trade Secrets and Confidentiality Alignment",
+      "description": "Ensure that confidentiality provisions protect trade secrets and include procedures for handling and disclosure consistent with IP protection.",
+      "severity": "HIGH",
+      "clause_types_affected": ["confidentiality", "IP"]
+    },
+    {
+      "id": "ip_004",
+      "title": "Infringement Risk Allocation",
+      "description": "Include mechanisms for infringement claims (e.g., indemnity, alternatives like replacement/modification) appropriate to the parties' roles.",
+      "severity": "MEDIUM",
+      "clause_types_affected": ["IP", "liability"]
+    }
+  ]
+}
+

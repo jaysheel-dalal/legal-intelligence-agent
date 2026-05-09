@@ -1,0 +1,19 @@
+NON-DISCLOSURE AGREEMENT
+
+This Non-Disclosure Agreement ("Agreement") is entered into by and between the Disclosing Party and the Receiving Party.
+
+1. CONFIDENTIALITY.
+The Receiving Party shall keep all Confidential Information strictly confidential and shall not disclose such Confidential Information to any third party except as permitted by this Agreement. The Receiving Party shall use the Confidential Information solely to evaluate and perform discussions related to the Purpose.
+
+2. EXCLUSIONS.
+Confidential Information does not include information that is publicly available through no breach of this Agreement, already known to the Receiving Party, or independently developed without use of the Confidential Information.
+
+3. RETURN OF MATERIALS.
+Upon written request or upon termination of discussions, the Receiving Party shall promptly return or destroy all materials containing Confidential Information and certify such destruction in writing.
+
+4. TERM.
+This Agreement begins on the Effective Date and continues for two (2) years. Sections intended to survive shall survive termination.
+
+5. GOVERNING LAW.
+This Agreement shall be governed by the laws of the State of California, without regard to conflict of law principles.
+

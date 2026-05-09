@@ -1,0 +1,29 @@
+{
+  "framework": "employment",
+  "description": "Employment-law reference for common contractual issues involving workers, restrictive covenants, and workplace compliance obligations.",
+  "applies_to": ["employment", "non-solicit", "confidentiality", "workplace compliance"],
+  "obligations": [
+    {
+      "id": "emp_001",
+      "title": "Restrictive Covenant Enforceability",
+      "description": "Restrictive covenants (e.g., non-solicitation, non-compete, non-interference) must be narrowly tailored and consistent with applicable state law requirements and evolving judicial standards.",
+      "severity": "CRITICAL",
+      "clause_types_affected": ["employment", "non-solicit", "termination"]
+    },
+    {
+      "id": "emp_002",
+      "title": "Work Product and Confidentiality",
+      "description": "Employment agreements should address ownership/assignment of work product created during employment and require protection of employer confidential information and trade secrets.",
+      "severity": "HIGH",
+      "clause_types_affected": ["confidentiality", "IP", "employment"]
+    },
+    {
+      "id": "emp_003",
+      "title": "Notice and Post-Termination Obligations",
+      "description": "Termination provisions should clearly define notice periods, cure periods, and which obligations survive termination (e.g., confidentiality and IP assignment).",
+      "severity": "MEDIUM",
+      "clause_types_affected": ["termination", "confidentiality"]
+    }
+  ]
+}
+

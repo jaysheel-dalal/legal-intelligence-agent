@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Logs and traces
+logs/
+*.jsonl
+
+# Contract files (keep private)
+contracts/
+
+# Temporary test files
+test.py
+test_prompt.py
+output.txt
+evaluation_results.txt
+
+# Old version files
+main.py
+evaluation.py
+chaos_test.py
+architecture.py
+package-lock.json
+premortem.txt
+
+# Environment
+.env
+*.env

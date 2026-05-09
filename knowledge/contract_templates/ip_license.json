@@ -1,0 +1,71 @@
+{
+  "contract_type": "IP License Agreement",
+  "version": "1.0.0",
+  "description": "Intellectual property licensing agreements covering patent, copyright, trademark, and trade secret licenses",
+  "required_clauses": [
+    {
+      "clause_type": "license_grant",
+      "severity": "CRITICAL",
+      "description": "Defines the scope of the license — exclusive or non-exclusive, field of use, territory, and sublicense rights"
+    },
+    {
+      "clause_type": "ip_ownership",
+      "severity": "CRITICAL",
+      "description": "Specifies who owns background IP, foreground IP, and jointly developed inventions"
+    },
+    {
+      "clause_type": "royalties_and_payments",
+      "severity": "CRITICAL",
+      "description": "Defines royalty rates, milestone payments, upfront fees, and payment schedule"
+    },
+    {
+      "clause_type": "patent_prosecution",
+      "severity": "HIGH",
+      "description": "Defines who files, maintains, and pays for patents and what happens if one party declines to prosecute"
+    },
+    {
+      "clause_type": "infringement_enforcement",
+      "severity": "HIGH",
+      "description": "Defines who has the right to sue infringers, who pays for litigation, and how damages are shared"
+    },
+    {
+      "clause_type": "representations_and_warranties",
+      "severity": "HIGH",
+      "description": "Licensor warrants ownership of IP, no conflicting licenses, and validity of patents"
+    },
+    {
+      "clause_type": "development_obligations",
+      "severity": "HIGH",
+      "description": "Defines licensee's obligations to develop and commercialize products, including best efforts requirements"
+    },
+    {
+      "clause_type": "term_and_termination",
+      "severity": "HIGH",
+      "description": "Defines agreement duration, termination triggers, notice periods, and post-termination rights"
+    },
+    {
+      "clause_type": "indemnification",
+      "severity": "MEDIUM",
+      "description": "Allocates liability for IP infringement claims, product liability, and breach of warranties"
+    },
+    {
+      "clause_type": "governing_law",
+      "severity": "LOW",
+      "description": "Specifies which jurisdiction's law governs and where disputes are resolved"
+    }
+  ],
+  "optional_clauses": [
+    {
+      "clause_type": "sublicense_rights",
+      "description": "Right to grant sublicenses to third parties"
+    },
+    {
+      "clause_type": "grant_back",
+      "description": "Licensee grants back improvements to licensor"
+    },
+    {
+      "clause_type": "most_favored_nation",
+      "description": "Guarantees licensee gets best available terms"
+    }
+  ]
+}

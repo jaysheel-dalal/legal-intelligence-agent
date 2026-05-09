@@ -1,0 +1,8 @@
+anthropic>=0.20.0
+pypdf>=4.0.0
+faiss-cpu>=1.7.4
+numpy>=1.24.0
+pytest>=8.0.0
+streamlit>=1.30.0
+python-docx>=1.1.0
+python-dateutil>=2.8.2
