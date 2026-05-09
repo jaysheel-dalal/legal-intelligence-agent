@@ -84,8 +84,8 @@ effective date and expiry date
 calculation).
 
 Analysis Agent — Sends chunks to
-Claude Sonnet with query + intent
-+ jurisdiction + dates. Claude
+Claude Sonnet with query + intent +
+jurisdiction + dates. Claude
 assigns risk levels, confidence
 scores, triggered flags, and plain
 English explanations.
