@@ -23,7 +23,6 @@ evaluation.py
 chaos_test.py
 architecture.py
 package-lock.json
-premortem.txt
 
 # Environment
 .env

@@ -1,0 +1,67 @@
+Six months after launch, the Legal Intelligence AI Agent fails because it produces readable but not reliably grounded legal explanations. Early mistakes erode trust, stale legal knowledge slips into outputs, and parsing breaks on real-world contract formatting. As scope expands without stronger evaluation gates, adoption collapses and downstream legal risk increases.
+
+LLM HALLUCINATION
+WHAT WENT WRONG
+- The agent filled missing terms by pattern instead of grounding every claim in extracted contract text.
+- It converted evidence gaps into confident language, so users treated speculation as analysis.
+WHY IT WAS FATAL IN A LEGAL CONTEXT SPECIFICALLY
+- A single wrong interpretation can flip negotiation posture or break compliance steps.
+- Hallucinated triggered obligations look time-bound and actionable, driving harmful actions.
+LIKELIHOOD SCORE: 9/10
+3 CONCRETE MITIGATIONS TO BUILD BEFORE LAUNCH
+- Evidence gating with exact citations for every risk and obligation.
+- Uncertainty policy returning "not determined from the document" when proof is missing.
+- Red-team regression with adversarial prompts and clause-mutation tests.
+
+USER TRUST FAILURE
+WHAT WENT WRONG
+- Similar documents produced different risk narratives without clear reasons or evidence changes.
+- The agent did not clearly separate document-grounded findings from knowledge-base guidance.
+WHY USERS STOPPED USING IT
+- Users had to re-check more than they saved, especially after the first few incidents.
+- Teams stopped integrating the agent when auditability and repeatability were inconsistent.
+LIKELIHOOD SCORE: 8/10
+3 CONCRETE MITIGATIONS TO BUILD BEFORE LAUNCH
+- Show citations for risks, obligations, and gaps.
+- Confidence-based UX that blocks high-impact recommendations when confidence is low.
+- Pilot with measurable gates for error rate, citation coverage, and time saved.
+
+KNOWLEDGE BASE GOES STALE
+WHAT WENT WRONG
+- Legal guidance updates were not versioned by effective date and jurisdiction.
+- Older summaries were treated as current, and the agent did not surface recency uncertainty.
+HOW OUTDATED LEGAL INFO CAUSED REAL DAMAGE
+- Users relied on stale privacy, employment, or liability interpretations for real contracting decisions.
+- Wrong assumptions created avoidable negotiation and compliance exposure.
+LIKELIHOOD SCORE: 7/10
+3 CONCRETE MITIGATIONS TO BUILD BEFORE LAUNCH
+- Version and effective-date checks by jurisdiction and topic.
+- Scheduled knowledge updates with automated validation.
+- Verify-before-action when guidance is not document-grounded.
+
+DOCUMENT PARSING FAILURES
+WHAT WENT WRONG
+- Real contracts include scanned text, redlines, tables, footnotes, and cross-references that break naive parsing.
+- Chunking missed key definitions and exceptions that control liability outcomes.
+HOW IT BROKE THE PIPELINE UPSTREAM OF THE LLM
+- Bad extraction reduced retrieval accuracy, so the LLM explained the wrong clause structure.
+LIKELIHOOD SCORE: 8/10
+3 CONCRETE MITIGATIONS TO BUILD BEFORE LAUNCH
+- OCR and table-aware extraction plus redline-aware segmentation.
+- Pre-LLM checks for broken references or missing clause density.
+- Block LLM calls when evidence quality fails thresholds.
+
+SCOPE CREEP
+HOW THE AGENT LOST FOCUS OVER TIME
+- New features shipped before grounding, parsing, and evaluation quality gates were stable.
+- Engineering effort shifted from core correctness to breadth and convenience.
+WHY TRYING TO DO TOO MUCH MADE IT UNRELIABLE
+- Each expansion added new edge cases across retrieval and formatting, multiplying failure modes.
+LIKELIHOOD SCORE: 6/10
+3 CONCRETE MITIGATIONS TO BUILD BEFORE LAUNCH
+- Freeze scope and define explicit out-of-scope refusals.
+- Release gates tied to hallucination risk, citation coverage, and parsing failures.
+- Evaluation harness preventing silent reliability regressions.
+
+VERDICT
+The single biggest risk is hallucinated legal interpretation presented as definitive analysis without provable grounding in the user's document. The one thing that must be built first is strict evidence gating with mandatory exact citations and a refusal or uncertainty response when evidence is missing or extraction is unreliable.
