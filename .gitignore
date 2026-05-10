@@ -5,7 +5,6 @@ __pycache__/
 .pytest_cache/
 
 # Logs and traces
-logs/
 *.jsonl
 
 # Contract files (keep private)

@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_132918",
+  "status": "done",
+  "contract_type": "employment",
+  "chunk_count": 36,
+  "file_path": "contracts/Law_Insider_synergy-resources-corp_exhibit-102-employment-agreement-agreement-effective-as-of-june-1-2013-between-synergy-resources_Filed_07-06-2013_Contract.pdf",
+  "error": null,
+  "latency_ms": 495
+}

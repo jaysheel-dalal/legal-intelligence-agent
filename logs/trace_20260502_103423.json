@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_103423",
+  "query": "what are the ip ownership terms",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpd8p39adk.pdf",
+  "intent": "IP",
+  "confidence": 0.95,
+  "contract_type": "ip_license",
+  "total_clauses_found": 0,
+  "total_missing": 0,
+  "critical_count": 0,
+  "high_count": 0,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "failed",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 134270,
+  "total_tokens": 46045,
+  "total_cost_usd": 0.163971,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_132810",
+  "status": "done",
+  "contract_type": "vendor",
+  "chunk_count": 30,
+  "file_path": "contracts/Supply agreement.pdf",
+  "error": null,
+  "latency_ms": 391
+}

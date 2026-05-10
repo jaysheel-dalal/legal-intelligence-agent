@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_134815",
+  "query": "What are confidentiality obligations?",
+  "file_path": "none",
+  "intent": "confidentiality",
+  "confidence": 0.95,
+  "contract_type": "unknown",
+  "total_clauses_found": 0,
+  "total_missing": 8,
+  "critical_count": 0,
+  "high_count": 0,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 8477,
+  "total_tokens": 7603,
+  "total_cost_usd": 0.026097,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

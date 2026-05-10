@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_134832",
+  "query": "What happens if I terminate early?",
+  "file_path": "contracts/ip licensing agreement.pdf",
+  "intent": "termination",
+  "confidence": 0.92,
+  "contract_type": "ip_license",
+  "total_clauses_found": 9,
+  "total_missing": 0,
+  "critical_count": 3,
+  "high_count": 3,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 62637,
+  "total_tokens": 49192,
+  "total_cost_usd": 0.165216,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

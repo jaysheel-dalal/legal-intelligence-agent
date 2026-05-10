@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_130705",
+  "query": "what if they deliver late",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpaflod7vx.pdf",
+  "intent": "breach",
+  "confidence": 0.82,
+  "contract_type": "vendor",
+  "total_clauses_found": 4,
+  "total_missing": 6,
+  "critical_count": 0,
+  "high_count": 1,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 24758,
+  "total_tokens": 12680,
+  "total_cost_usd": 0.04992,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

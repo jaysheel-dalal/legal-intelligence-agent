@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_133044",
+  "status": "failed",
+  "contract_type": "unknown",
+  "chunk_count": 0,
+  "file_path": "contracts/nonexistent.pdf",
+  "error": "document not found: nonexistent.pdf",
+  "latency_ms": 6
+}

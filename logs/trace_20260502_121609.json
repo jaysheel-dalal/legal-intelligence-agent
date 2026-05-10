@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_121609",
+  "query": "can they raise prices",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpe_7cto7l.pdf",
+  "intent": "payment",
+  "confidence": 0.88,
+  "contract_type": "partnership",
+  "total_clauses_found": 0,
+  "total_missing": 3,
+  "critical_count": 0,
+  "high_count": 0,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 23593,
+  "total_tokens": 19309,
+  "total_cost_usd": 0.068427,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

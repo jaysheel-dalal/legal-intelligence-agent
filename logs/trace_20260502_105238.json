@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_105238",
+  "query": "what happens if I break this agreement",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpp9k_tz_d.pdf",
+  "intent": "breach",
+  "confidence": 0.92,
+  "contract_type": "NDA",
+  "total_clauses_found": 8,
+  "total_missing": 1,
+  "critical_count": 1,
+  "high_count": 3,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 45537,
+  "total_tokens": 15083,
+  "total_cost_usd": 0.069237,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

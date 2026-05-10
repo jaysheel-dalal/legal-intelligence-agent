@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_114617",
+  "query": "What are the key terms obligations and rights in this agreement?",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpsmozxgw7.pdf",
+  "intent": "liability",
+  "confidence": 0.85,
+  "contract_type": "NDA",
+  "total_clauses_found": 10,
+  "total_missing": 0,
+  "critical_count": 1,
+  "high_count": 3,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 50398,
+  "total_tokens": 15641,
+  "total_cost_usd": 0.077619,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

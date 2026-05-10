@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_135025",
+  "status": "done",
+  "contract_type": "employment",
+  "chunk_count": 7,
+  "file_path": "contracts/EMPLOYMENT AGREEMENT.pdf",
+  "error": null,
+  "latency_ms": 2160
+}

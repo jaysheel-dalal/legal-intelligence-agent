@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_133215",
+  "status": "done",
+  "contract_type": "NDA",
+  "chunk_count": 13,
+  "file_path": "contracts/3 way nda.pdf",
+  "error": null,
+  "latency_ms": 330
+}

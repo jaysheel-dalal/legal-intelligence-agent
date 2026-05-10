@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_132952",
+  "status": "done",
+  "contract_type": "NDA",
+  "chunk_count": 15,
+  "file_path": "contracts/Confidentiality and Non-Disclosure Agreement.pdf",
+  "error": null,
+  "latency_ms": 124
+}

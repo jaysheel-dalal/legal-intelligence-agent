@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_134519",
+  "query": "What are the delivery obligations?",
+  "file_path": "contracts/Supply agreement.pdf",
+  "intent": "payment",
+  "confidence": 0.82,
+  "contract_type": "vendor",
+  "total_clauses_found": 5,
+  "total_missing": 6,
+  "critical_count": 1,
+  "high_count": 2,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 29414,
+  "total_tokens": 13437,
+  "total_cost_usd": 0.055335,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

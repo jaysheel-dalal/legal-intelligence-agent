@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_114315",
+  "query": "what happens if I break this agreement",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpnrfziiko.pdf",
+  "intent": "breach",
+  "confidence": 0.92,
+  "contract_type": "NDA",
+  "total_clauses_found": 6,
+  "total_missing": 0,
+  "critical_count": 1,
+  "high_count": 2,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 33113,
+  "total_tokens": 13427,
+  "total_cost_usd": 0.056733,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

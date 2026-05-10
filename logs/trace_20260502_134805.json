@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_134805",
+  "query": "What are the payment terms?",
+  "file_path": "contracts/nonexistent.pdf",
+  "intent": "payment",
+  "confidence": 0.95,
+  "contract_type": "unknown",
+  "total_clauses_found": 0,
+  "total_missing": 9,
+  "critical_count": 0,
+  "high_count": 0,
+  "agent_statuses": {
+    "parser_agent": "failed",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 9151,
+  "total_tokens": 7591,
+  "total_cost_usd": 0.026001,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_134627",
+  "query": "What happens if I am terminated?",
+  "file_path": "contracts/Law_Insider_synergy-resources-corp_exhibit-102-employment-agreement-agreement-effective-as-of-june-1-2013-between-synergy-resources_Filed_07-06-2013_Contract.pdf",
+  "intent": "termination",
+  "confidence": 0.92,
+  "contract_type": "employment",
+  "total_clauses_found": 10,
+  "total_missing": 1,
+  "critical_count": 4,
+  "high_count": 3,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 44969,
+  "total_tokens": 16662,
+  "total_cost_usd": 0.075018,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

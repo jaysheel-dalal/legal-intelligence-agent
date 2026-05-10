@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_133327",
+  "query": "What are my IP ownership obligations as an employee?",
+  "file_path": "contracts/EMPLOYMENT AGREEMENT.pdf",
+  "intent": "IP",
+  "confidence": 0.92,
+  "contract_type": "employment",
+  "total_clauses_found": 4,
+  "total_missing": 1,
+  "critical_count": 2,
+  "high_count": 2,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 36116,
+  "total_tokens": 20524,
+  "total_cost_usd": 0.078324,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

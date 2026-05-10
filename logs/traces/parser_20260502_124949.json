@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_124949",
+  "status": "done",
+  "contract_type": "ip_license",
+  "chunk_count": 14,
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmp1ipqqg9z.pdf",
+  "error": null,
+  "latency_ms": 664
+}

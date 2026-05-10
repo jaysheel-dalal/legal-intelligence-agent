@@ -1,0 +1,13 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260508_105409",
+  "status": "done",
+  "contract_type": "employment",
+  "jurisdiction": "US \u2014 General",
+  "effective_date": "April 1, 2025",
+  "expiry_date": "May 31, 2025",
+  "chunk_count": 14,
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpylacqdvf.pdf",
+  "error": null,
+  "latency_ms": 374
+}

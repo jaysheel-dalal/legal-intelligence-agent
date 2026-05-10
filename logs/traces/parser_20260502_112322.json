@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_112322",
+  "status": "done",
+  "contract_type": "NDA",
+  "chunk_count": 13,
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpm1q2p4gj.pdf",
+  "error": null,
+  "latency_ms": 323
+}

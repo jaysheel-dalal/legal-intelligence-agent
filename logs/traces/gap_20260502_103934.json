@@ -1,0 +1,11 @@
+{
+  "agent_id": "gap_agent",
+  "trace_id": "20260502_103934",
+  "status": "done",
+  "gap_count": 0,
+  "critical_gaps": 0,
+  "error": null,
+  "latency_ms": 34,
+  "tokens_used": 2416,
+  "cost": 0.008508
+}

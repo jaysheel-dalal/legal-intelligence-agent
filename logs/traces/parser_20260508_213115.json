@@ -1,0 +1,13 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260508_213115",
+  "status": "done",
+  "contract_type": "NDA",
+  "jurisdiction": "US \u2014 Delaware law",
+  "effective_date": "Not found",
+  "expiry_date": "Not found",
+  "chunk_count": 13,
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmpbn_xh81v.pdf",
+  "error": null,
+  "latency_ms": 642
+}

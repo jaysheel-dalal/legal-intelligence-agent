@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_132717",
+  "status": "done",
+  "contract_type": "vendor",
+  "chunk_count": 128,
+  "file_path": "contracts/Saas.pdf",
+  "error": null,
+  "latency_ms": 1603
+}

@@ -1,0 +1,12 @@
+{
+  "agent_id": "analysis_agent",
+  "trace_id": "20260502_134218",
+  "status": "done",
+  "clause_count": 104,
+  "critical_count": 0,
+  "high_count": 0,
+  "error": null,
+  "latency_ms": 142208,
+  "tokens_used": 68348,
+  "cost": 0.28003199999999995
+}

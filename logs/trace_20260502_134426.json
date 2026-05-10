@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_134426",
+  "query": "What are the subscription and payment terms?",
+  "file_path": "contracts/Saas.pdf",
+  "intent": "payment",
+  "confidence": 0.95,
+  "contract_type": "vendor",
+  "total_clauses_found": 11,
+  "total_missing": 2,
+  "critical_count": 1,
+  "high_count": 5,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 52003,
+  "total_tokens": 41669,
+  "total_cost_usd": 0.151419,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}

@@ -1,0 +1,13 @@
+{
+  "agent_id": "report_agent",
+  "trace_id": "20260502_112737",
+  "status": "done",
+  "total_clauses_found": 7,
+  "total_missing": 1,
+  "critical_count": 1,
+  "high_count": 3,
+  "error": null,
+  "latency_ms": 0,
+  "tokens_used": 14011,
+  "cost": 0.062025
+}

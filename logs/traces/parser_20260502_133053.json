@@ -1,0 +1,10 @@
+{
+  "agent_id": "parser_agent",
+  "trace_id": "20260502_133053",
+  "status": "done",
+  "contract_type": "unknown",
+  "chunk_count": 1,
+  "file_path": "none",
+  "error": null,
+  "latency_ms": 0
+}

@@ -1,0 +1,23 @@
+{
+  "trace_id": "20260502_115500",
+  "query": "can they change my salary",
+  "file_path": "C:\\Users\\JAYSHE~1\\AppData\\Local\\Temp\\tmptxicaeit.pdf",
+  "intent": "employment",
+  "confidence": 0.92,
+  "contract_type": "employment",
+  "total_clauses_found": 5,
+  "total_missing": 2,
+  "critical_count": 1,
+  "high_count": 3,
+  "agent_statuses": {
+    "parser_agent": "done",
+    "analysis_agent": "done",
+    "gap_agent": "done",
+    "report_agent": "done"
+  },
+  "total_latency_ms": 30694,
+  "total_tokens": 14519,
+  "total_cost_usd": 0.059505,
+  "prompt_version": "v1.0.0",
+  "mode": "multi_agent_parallel"
+}
