@@ -175,15 +175,14 @@ Run with mock (no API key needed):
 
 ## Evaluation Results
 
-Total: 19/20 (95%)
-
-  Happy Path:  7/8  (88%)
-  Exceptions:  4/4  (100%)
-  Edge Cases:  4/4  (100%)
-  Adversarial: 4/4  (100%)
-
-Avg latency:  33.5 seconds
-Total cost:   ~$1.21 per full run
+    Total: 30/30 (100%)
+    Happy Path:      8/8   (100%)
+    Exceptions:      4/4   (100%)
+    Edge Cases:      4/4   (100%)
+    Adversarial:     4/4   (100%)
+    Premortem Risk:  10/10 (100%)
+    Avg latency:     56.5 seconds
+    Total cost:      ~$2.16 per full run
 
 ---
 

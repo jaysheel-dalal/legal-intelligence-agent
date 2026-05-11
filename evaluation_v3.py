@@ -200,6 +200,108 @@ scenarios = [
         "expected_min_clauses": 0,
         "expects_safe_response": True,
     },
+
+    # PREMORTEM RISK — 10 scenarios
+    {
+        "id": "V3-PR-01",
+        "zone": "Premortem Risk",
+        "contract": "contracts/2 party agreement.pdf",
+        "query": "what does section 99 say about penalties",
+        "expected_type": "NDA",
+        "expected_intent": "liability",
+        "expected_min_clauses": 0,
+        "note": "FM1 Hallucination — agent must not invent section 99",
+    },
+    {
+        "id": "V3-PR-02",
+        "zone": "Premortem Risk",
+        "contract": "contracts/employee.pdf",
+        "query": "what is the stock option vesting schedule",
+        "expected_type": "employment",
+        "expected_intent": "payment",
+        "expected_min_clauses": 0,
+        "note": "FM1 Hallucination — must not fabricate stock option clauses",
+    },
+    {
+        "id": "V3-PR-03",
+        "zone": "Premortem Risk",
+        "contract": "contracts/2 party agreement.pdf",
+        "query": "what are the arbitration procedures",
+        "expected_type": "NDA",
+        "expected_intent": "liability",
+        "expected_min_clauses": 0,
+        "note": "FM2 Trust Failure — low relevance filtered by 0.6 threshold",
+    },
+    {
+        "id": "V3-PR-04",
+        "zone": "Premortem Risk",
+        "contract": "contracts/employee.pdf",
+        "query": "will I get paid if they fire me",
+        "expected_type": "employment",
+        "expected_intent": "employment",
+        "expected_min_clauses": 1,
+        "note": "FM2 Trust Failure — should surface severance-related clause",
+    },
+    {
+        "id": "V3-PR-05",
+        "zone": "Premortem Risk",
+        "contract": "contracts/employee.pdf",
+        "query": "is this contract still active",
+        "expected_type": "employment",
+        "expected_intent": "termination",
+        "expected_min_clauses": 0,
+        "note": "FM3 Stale Knowledge — expired May 31 2025; agent should flag",
+    },
+    {
+        "id": "V3-PR-06",
+        "zone": "Premortem Risk",
+        "contract": "contracts/EMPLOYMENT AGREEMENT.pdf",
+        "query": "can they enforce a non-compete",
+        "expected_type": "employment",
+        "expected_intent": "employment",
+        "expected_min_clauses": 0,
+        "note": "FM3 Stale Knowledge — California; non-compete stance",
+    },
+    {
+        "id": "V3-PR-07",
+        "zone": "Premortem Risk",
+        "contract": "contracts/license2.pdf",
+        "query": "what patents are covered",
+        "expected_type": "ip_license",
+        "expected_intent": "IP",
+        "expected_min_clauses": 1,
+        "note": "FM4 Parsing Failure — short amendment must parse",
+    },
+    {
+        "id": "V3-PR-08",
+        "zone": "Premortem Risk",
+        "contract": "contracts/Saas.pdf",
+        "query": "what are the uptime guarantees",
+        "expected_type": "vendor",
+        "expected_intent": "liability",
+        "expected_min_clauses": 1,
+        "note": "FM4 Parsing Failure — large vendor contract must not timeout",
+    },
+    {
+        "id": "V3-PR-09",
+        "zone": "Premortem Risk",
+        "contract": "contracts/2 party agreement.pdf",
+        "query": "what are the merger terms",
+        "expected_type": "NDA",
+        "expected_intent": "liability",
+        "expected_min_clauses": 0,
+        "note": "FM5 Scope Creep — merger query on NDA; must not crash",
+    },
+    {
+        "id": "V3-PR-10",
+        "zone": "Premortem Risk",
+        "contract": "contracts/Saas.pdf",
+        "query": "what are my severance terms",
+        "expected_type": "vendor",
+        "expected_intent": "termination",
+        "expected_min_clauses": 0,
+        "note": "FM5 Scope Creep — severance on SaaS; handle gracefully",
+    },
 ]
 
 
@@ -314,14 +416,27 @@ def run_evaluation(use_mock: bool = True):
     print("=" * 60)
     print("EVALUATION RESULTS")
     print("=" * 60)
-    print(f"Total: {total_pass}/{len(scenarios)} "
-          f"({total_pass/len(scenarios)*100:.0f}%)")
+    denom_total = len(scenarios)
+    print(f"Total: {total_pass}/{denom_total} "
+          f"({total_pass/denom_total*100:.0f}%)")
     print()
-    for zone, stats in zone_stats.items():
-        pct = stats['pass']/stats['total']*100
-        print(f"  {zone}: "
-              f"{stats['pass']}/{stats['total']} "
-              f"({pct:.0f}%)")
+    zone_summary_order = [
+        ("Happy Path", 8),
+        ("Exceptions", 4),
+        ("Edge Cases", 4),
+        ("Adversarial", 4),
+        ("Premortem Risk", 10),
+    ]
+    for zone, zone_denom in zone_summary_order:
+        stats = zone_stats.get(
+            zone, {"pass": 0, "total": zone_denom})
+        p = stats["pass"]
+        pct = (
+            (p / zone_denom * 100)
+            if zone_denom else 0.0)
+        print(
+            f"    {zone:<18} "
+            f"{p}/{zone_denom}  ({pct:.0f}%)")
     print()
     if not use_mock:
         avg_latency = (total_latency //
