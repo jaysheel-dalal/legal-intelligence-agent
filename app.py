@@ -5,6 +5,8 @@ import os
 sys.path.insert(0, os.path.dirname(
     os.path.abspath(__file__)))
 
+from legal_intelligence_agent.text_signals import signal_in
+
 
 st.set_page_config(
     page_title="Legal Intelligence Agent",
@@ -985,9 +987,15 @@ def run_real(query, uploaded_file):
 
             score = 0
 
-            # Strong boost for intent keywords
+            # Strong boost for intent keywords.
+            # Word-boundary matched: intent_boost_map carries short signals
+            # such as "end" and "ip", and plain containment scored them
+            # inside unrelated words -- "end" in "vendor", "ip" in
+            # "equipment" -- handing +3 relevance to clauses that never
+            # mentioned the topic. Stems like "terminat" and "revok" still
+            # match their inflections.
             for kw in boost_keywords:
-                if kw in text:
+                if signal_in(text, kw):
                     score += 3
 
             # Mild boost for raw query words
