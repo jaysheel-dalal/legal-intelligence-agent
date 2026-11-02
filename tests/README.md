@@ -6,6 +6,20 @@ Categories:
 - VAGUE QUERY: confirms the parser triggers a clarification workflow for underspecified user requests and only returns intent labels for specific questions.
 - ADVERSARIAL: confirms the parser does not hallucinate clauses that are not grounded in the document when retrieval fails or returns no evidence.
 
+Known limitation — corrupt .docx detection:
+
+`DocumentParser._load_text_from_path` does not use a real DOCX reader. For a
+`.docx` input it calls `raw.decode("utf-8")` and raises
+`ParseError("corrupt or malformed docx")` only when the bytes are undecodable.
+Two consequences worth knowing before trusting `test_corrupt_docx_returns_error`:
+- A "corrupt" file whose bytes happen to be valid UTF-8 text parses successfully,
+  so the `corrupt_docx_path` fixture must contain invalid UTF-8 to exercise the
+  failure path at all.
+- A genuine `.docx` is a zip archive and is therefore also undecodable, so real
+  DOCX input hits the same error. `.docx` is effectively unsupported despite
+  being listed in the accepted suffixes and `python-docx` being in
+  `requirements.txt`.
+
 How to add new test cases:
 - Add new fixtures under `tests/fixtures/` when you need realistic sample contract text.
 - Add new test functions to `tests/test_document_parser.py` in the appropriate test class.

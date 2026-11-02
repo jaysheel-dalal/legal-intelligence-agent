@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Any, Dict, List, Sequence
 from unittest.mock import MagicMock
@@ -25,13 +24,12 @@ def fixtures_dir(repo_root: Path) -> Path:
     return repo_root / "tests" / "fixtures"
 
 
-@pytest.fixture(scope="session", autouse=True)
-def prepare_binary_fixtures(fixtures_dir: Path) -> None:
-    # Tests require:
-    # - empty.pdf to be 0 bytes
-    # - corrupt.docx to contain malformed/random bytes
-    (fixtures_dir / "empty.pdf").write_bytes(b"")
-    (fixtures_dir / "corrupt.docx").write_bytes(os.urandom(128))
+@pytest.fixture(scope="session")
+def binary_fixtures_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    # Malformed binary fixtures are generated into a temp dir, never written
+    # into the tracked tests/fixtures/ tree: running the suite must not dirty
+    # the working copy.
+    return tmp_path_factory.mktemp("binary_fixtures")
 
 
 @pytest.fixture
@@ -44,14 +42,27 @@ def clean_vendor_path(fixtures_dir: Path) -> Path:
     return fixtures_dir / "clean_vendor.txt"
 
 
-@pytest.fixture
-def empty_pdf_path(fixtures_dir: Path) -> Path:
-    return fixtures_dir / "empty.pdf"
+@pytest.fixture(scope="session")
+def empty_pdf_path(binary_fixtures_dir: Path) -> Path:
+    # Must be 0 bytes. The .pdf suffix matters: DocumentParser dispatches on it.
+    path = binary_fixtures_dir / "empty.pdf"
+    path.write_bytes(b"")
+    return path
 
 
-@pytest.fixture
-def corrupt_docx_path(fixtures_dir: Path) -> Path:
-    return fixtures_dir / "corrupt.docx"
+# A truncated .docx: the real zip magic number followed by 124 bytes that are
+# not valid UTF-8. Fixed rather than os.urandom so a parser failure reproduces
+# byte-for-byte. Both properties are load-bearing -- DocumentParser currently
+# detects a corrupt .docx only by UTF-8 undecodability (see the note in
+# tests/README.md), so a plain-ASCII "corrupt" fixture parses successfully.
+CORRUPT_DOCX_BYTES = b"PK\x03\x04" + bytes(range(0x80, 0xFC))
+
+
+@pytest.fixture(scope="session")
+def corrupt_docx_path(binary_fixtures_dir: Path) -> Path:
+    path = binary_fixtures_dir / "corrupt.docx"
+    path.write_bytes(CORRUPT_DOCX_BYTES)
+    return path
 
 
 @pytest.fixture
