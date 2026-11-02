@@ -2,6 +2,12 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
+from legal_intelligence_agent.confidence import (
+    drop_counts,
+    model_confidence,
+    partition_by_threshold,
+)
+
 
 class AgentError(Exception):
     pass
@@ -71,7 +77,10 @@ class AgentCore:
             clause["legal_meaning"] = item.get("legal_meaning", "")
             clause["triggered"] = bool(item.get("triggered", False))
             clause["source_position"] = chunk.get("position")
-            clause["confidence"] = float(item.get("confidence", 0.7))
+            # None when the model reported nothing usable. This used to default
+            # to 0.7, which silently cleared the 0.6 gate below, so an unscored
+            # clause was indistinguishable from one the model vouched for.
+            clause["confidence"] = model_confidence(item)
             out.append(clause)
         return out
 
@@ -125,12 +134,12 @@ class AgentCore:
             raise AgentError(f"validate failed: {e}") from e
 
         clauses = validated.get("analyzed_clauses", translated)
-        filtered = []
-        for c in clauses:
-            confidence = float(c.get("confidence", 0.0))
-            source_position = c.get("source_position")
-            if confidence >= 0.6 and source_position is not None:
-                filtered.append(c)
+
+        # A clause with no model confidence fails the gate, same as one scored
+        # below it. float(c.get("confidence", 0.0)) also raised on a
+        # non-numeric value instead of rejecting the clause.
+        scored, dropped_missing, dropped_low = partition_by_threshold(clauses)
+        filtered = [c for c in scored if c.get("source_position") is not None]
 
         return {
             "analyzed_clauses": filtered,
@@ -139,5 +148,6 @@ class AgentCore:
                 "summary",
                 "The contract review highlights key risks and missing protections in plain language.",
             ),
+            **drop_counts(dropped_missing, dropped_low),
         }
 

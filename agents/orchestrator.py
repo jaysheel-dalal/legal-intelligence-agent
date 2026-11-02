@@ -203,6 +203,8 @@ class Orchestrator:
         total_tokens = getattr(self.llm_client, "total_tokens", 0)
         total_cost = getattr(self.llm_client, "total_cost", 0.0)
 
+        agent_res = report_result.get("agent_result", {}) or {}
+
         final_result = {
             "trace_id": self.trace_id,
             "query": query,
@@ -217,6 +219,13 @@ class Orchestrator:
             "agent_result": report_result.get("agent_result", {}),
             "total_clauses_found": report_result.get("total_clauses_found", 0),
             "total_missing": report_result.get("total_missing", 0),
+            # Why clauses did not reach the user: no model confidence at all,
+            # versus scored below the 0.6 bar. Recorded in the trace so a thin
+            # result can be told apart from a model that declined to score.
+            "dropped_missing_confidence": agent_res.get(
+                "dropped_missing_confidence", 0),
+            "dropped_low_confidence": agent_res.get(
+                "dropped_low_confidence", 0),
             "critical_count": report_result.get("critical_count", 0),
             "high_count": report_result.get("high_count", 0),
             "agent_statuses": self.agent_statuses,

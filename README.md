@@ -134,7 +134,25 @@ Average cost per query: $0.06-0.09
 
 3. Confidence threshold — Results
    with confidence below 0.6 are
-   removed by the Report Agent.
+   removed, and so are results the
+   model did not score at all. An
+   absent confidence is absent, never
+   a default: three layers used to
+   substitute one (agent_core.analyze
+   0.7, ClaudeLLMClient.validate 1.0,
+   app.py 0.62-0.97 by risk level),
+   so an unscored clause could reach
+   the user shown as 97% confident
+   and the filter could not reject
+   it. The gate now lives in one
+   place,
+   legal_intelligence_agent/
+   confidence.py. The UI still shows
+   a derived number when the model
+   gave none, but under a separate
+   key and labelled "est.", so it
+   cannot be read back as a model
+   score.
 
 4. Grounding rule in system prompt
    — Never invent a clause. Only
@@ -343,9 +361,10 @@ claims to catch, including a fabricated
 
 ## Test Results
 
-133 / 133 unit tests passing
-(109 pipeline + 24 covering the
-factual correctness eval)
+187 / 187 unit tests passing
+(109 pipeline + 24 factual
+correctness eval + 54 confidence
+gate)
 
 ---
 
@@ -390,6 +409,6 @@ Project 2 — Done: evaluation
   framework + approval gate
 Project 3 — Done: 4-agent
   sequential pipeline +
-  jurisdiction + date context + 133 tests
+  jurisdiction + date context + 187 tests
 
 ---

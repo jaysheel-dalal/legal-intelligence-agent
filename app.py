@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(
     os.path.abspath(__file__)))
 
 from legal_intelligence_agent.text_signals import signal_in
+from legal_intelligence_agent.confidence import confidence_for_display
 
 
 st.set_page_config(
@@ -309,38 +310,21 @@ def run_real(query, uploaded_file):
                     plain_english = plain_english[
                         len(prefix):].strip()
 
-            # Use Claude's confidence if it
-            # provided a real value. Only fall
-            # back to a derived value when the
-            # field is missing or matches the
-            # known sentinel defaults.
-            raw_conf = c.get("confidence")
-            sentinel_defaults = {0.7, 0.8, 0.65}
-            needs_fallback = (
-                raw_conf is None
-                or raw_conf in sentinel_defaults
-            )
-            if needs_fallback:
-                risk = c.get(
-                    "risk_level", "MEDIUM")
-                triggered = c.get(
-                    "triggered", False)
-                if triggered and risk == "CRITICAL":
-                    raw_conf = 0.97
-                elif triggered and risk == "HIGH":
-                    raw_conf = 0.92
-                elif triggered and risk == "MEDIUM":
-                    raw_conf = 0.85
-                elif triggered:
-                    raw_conf = 0.78
-                elif risk == "CRITICAL":
-                    raw_conf = 0.88
-                elif risk == "HIGH":
-                    raw_conf = 0.80
-                elif risk == "MEDIUM":
-                    raw_conf = 0.72
-                else:
-                    raw_conf = 0.62
+            # Split the model's reported confidence from the number the UI
+            # renders. This used to overwrite "confidence" itself with a
+            # derived 0.62-0.97, which meant a clause the model never scored
+            # was shown as up to 97% confident and no confidence gate could
+            # tell it apart from a real score. The derived value now lives
+            # under a separate key, so by construction it cannot be read back
+            # as a model score or satisfy the 0.6 threshold.
+            #
+            # The old code also treated {0.7, 0.8, 0.65} as "sentinel"
+            # defaults to be replaced, which threw away genuine model
+            # confidences equal to those. The 0.7 it was really chasing came
+            # from agent_core.analyze and is fixed at the source instead.
+            (model_conf,
+             display_conf,
+             conf_estimated) = confidence_for_display(c)
 
             # Use this cleaned version
             clauses.append({
@@ -353,7 +337,9 @@ def run_real(query, uploaded_file):
                     "source_position", 0),
                 "triggered": c.get(
                     "triggered", False),
-                "confidence": raw_conf,
+                "confidence": model_conf,
+                "display_confidence": display_conf,
+                "confidence_estimated": conf_estimated,
             })
 
         # ─────────────────────────────────
@@ -1578,10 +1564,12 @@ if "result" in st.session_state:
         if c.get("triggered")]
 
     if triggered:
+        # Sort on display_confidence, not confidence: the latter is None for a
+        # clause the model did not score, and comparing None to a float raises.
         triggered_sorted = sorted(
             triggered,
             key=lambda x: x.get(
-                "confidence", 0),
+                "display_confidence", 0) or 0,
             reverse=True)
 
         if len(triggered_sorted) >= 4:
@@ -1596,7 +1584,7 @@ if "result" in st.session_state:
                  if not c.get(
                      "triggered", False)],
                 key=lambda x: x.get(
-                    "confidence", 0),
+                    "display_confidence", 0) or 0,
                 reverse=True)
             display_clauses = (
                 triggered_sorted +
@@ -1650,8 +1638,15 @@ if "result" in st.session_state:
                 .title()
             )
 
+            # display_confidence is always a number; confidence may be None.
+            # Mark a derived value with "~" so an estimate is never shown as
+            # though the model had reported it.
             confidence_pct = int(
-                clause["confidence"] * 100)
+                (clause.get("display_confidence") or 0) * 100)
+            confidence_label = (
+                f"~{confidence_pct}% est."
+                if clause.get("confidence_estimated")
+                else f"{confidence_pct}%")
 
             source_pos = clause["source_position"]
             plain_text = clause.get(
@@ -1730,7 +1725,7 @@ if "result" in st.session_state:
                 f'monospace;font-size:9px;'
                 f'color:#C8BFB0;">'
                 f'&sect; {source_pos} '
-                f'&middot; {confidence_pct}%'
+                f'&middot; {confidence_label}'
                 f'</div>'
                 f'</div>'
                 f'<div style="font-family:Lato,'

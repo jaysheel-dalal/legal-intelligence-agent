@@ -9,6 +9,11 @@ from datetime import datetime
 
 from agents.orchestrator import Orchestrator
 from legal_intelligence_agent.text_signals import any_signal
+from legal_intelligence_agent.confidence import (
+    drop_counts,
+    partition_by_threshold,
+    passes_threshold,
+)
 
 
 class MockLLMClient:
@@ -260,10 +265,9 @@ class MockLLMClient:
 
     def validate(self, analyzed: list, translated: list, gaps: list) -> dict:
         translated_by_pos = {int(c.get("source_position", c.get("position", -1))): c for c in translated}
+        kept, dropped_missing, dropped_low = partition_by_threshold(analyzed)
         final = []
-        for clause in analyzed:
-            if float(clause.get("confidence", 0.0)) < 0.6:
-                continue
+        for clause in kept:
             pos = int(clause.get("source_position", clause.get("position", -1)))
             merged = dict(clause)
             merged.update(translated_by_pos.get(pos, {}))
@@ -278,6 +282,7 @@ class MockLLMClient:
             "total_missing": len(gaps),
             "critical_count": critical_count,
             "high_count": high_count,
+            **drop_counts(dropped_missing, dropped_low),
         }
 
 
@@ -826,7 +831,9 @@ from the contract entirely.
             return []
 
     def validate(self, analyzed: list, translated: list, gaps: list) -> dict:
-        filtered = [c for c in translated if c.get("confidence", 1.0) >= 0.6]
+        # Was c.get("confidence", 1.0) >= 0.6, so a clause the model never
+        # scored defaulted to full confidence and passed the gate.
+        filtered, dropped_missing, dropped_low = partition_by_threshold(translated)
         critical = sum(1 for c in filtered if c.get("risk_level") == "CRITICAL")
         high = sum(1 for c in filtered if c.get("risk_level") == "HIGH")
         summary = f"Found {len(filtered)} clauses. {critical} are CRITICAL."
@@ -840,6 +847,7 @@ from the contract entirely.
             "total_missing": len(gaps),
             "critical_count": critical,
             "high_count": high,
+            **drop_counts(dropped_missing, dropped_low),
         }
 
 

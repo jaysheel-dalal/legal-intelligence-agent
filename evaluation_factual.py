@@ -126,6 +126,19 @@ def reported_clauses(result):
     return agent_result.get("analyzed_clauses") or []
 
 
+def gate_drops(result):
+    """How many clauses the 0.6 gate removed, and why.
+
+    Reported separately because the two causes mean different things: a clause
+    with no confidence at all points at the model or the prompt, while one
+    scored below the bar is the filter doing its job.
+    """
+    return (
+        int(result.get("dropped_missing_confidence", 0) or 0),
+        int(result.get("dropped_low_confidence", 0) or 0),
+    )
+
+
 def score_clause_types(gold_clauses, reported):
     """Set-retrieval scoring over (source_position, clause_type) pairs."""
     gold_by_pos = {g["source_position"]: g for g in gold_clauses}
@@ -314,6 +327,7 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
     tot_tp = tot_fp = tot_fn = 0
     tot_checked = tot_grounded = 0
     tot_intent = tot_intent_ok = 0
+    tot_drop_missing = tot_drop_low = 0
     integrity_problems = []
 
     for spec in gold_data["fixtures"]:
@@ -350,6 +364,10 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
         )
         reported = reported_clauses(coverage_result)
 
+        drop_missing, drop_low = gate_drops(coverage_result)
+        tot_drop_missing += drop_missing
+        tot_drop_low += drop_low
+
         ct = score_clause_types(gold_clauses, reported)
         gr = score_grounding(gold_clauses, reported, chunk_by_pos)
 
@@ -380,6 +398,10 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
             f"  Grounding:      {gr['grounded']}/{gr['checked']} citations "
             f"resolve to supporting text  (rate={gr['rate']})"
         )
+        print(
+            f"  Gate drops:     {drop_missing} missing confidence, "
+            f"{drop_low} below {0.6}  (coverage query)"
+        )
         for fail in gr["failures"]:
             print(f"    x pos={fail['source_position']}  {fail['kind']}: {fail['detail']}")
 
@@ -388,6 +410,9 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
         intent_results = []
         for q in spec["queries"]:
             result = run_pipeline(llm_factory, q["query"], fixture, log_dir)
+            q_drop_missing, q_drop_low = gate_drops(result)
+            tot_drop_missing += q_drop_missing
+            tot_drop_low += q_drop_low
             scored = score_intent(q["expected_intent"], result)
             scored["query"] = q["query"]
             intent_results.append(scored)
@@ -408,6 +433,10 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
                 "clause_typing": ct,
                 "grounding": gr,
                 "intent": intent_results,
+                "gate_drops_coverage_query": {
+                    "missing_confidence": drop_missing,
+                    "below_threshold": drop_low,
+                },
             }
         )
 
@@ -432,6 +461,10 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
         f"  Intent          {tot_intent_ok}/{tot_intent} "
         f"({intent_accuracy * 100:.0f}%)"
     )
+    print(
+        f"  Gate drops      {tot_drop_missing} missing confidence, "
+        f"{tot_drop_low} below threshold (all runs)"
+    )
     if integrity_problems:
         print(f"  GOLD INTEGRITY  {len(integrity_problems)} problem(s) -- scores unreliable")
     print("=" * 68)
@@ -452,6 +485,10 @@ def evaluate(use_mock=True, gold_path=GOLD_PATH, log_dir="logs/factual",
                 "total": tot_intent,
                 "correct": tot_intent_ok,
                 "accuracy": round(intent_accuracy, 3),
+            },
+            "gate_drops": {
+                "missing_confidence": tot_drop_missing,
+                "below_threshold": tot_drop_low,
             },
         },
         "gold_integrity_problems": integrity_problems,
