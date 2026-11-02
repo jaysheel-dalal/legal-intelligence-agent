@@ -52,9 +52,9 @@ GOLD_PATH = "evaluation_gold_labels.json"
 # Current measured scores, so --strict fails on a regression rather than on the
 # defects the gold labels already document. Raise these as the pipeline improves.
 BASELINE = {
-    "clause_type_f1": 0.69,
+    "clause_type_f1": 0.92,
     "grounding_rate": 1.00,
-    "intent_accuracy": 0.85,
+    "intent_accuracy": 1.00,
 }
 
 

@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-11-02T14:57:16.023758",
+  "suite": "factual_correctness",
+  "mode": "mock",
+  "gold_labels": "evaluation_gold_labels.json",
+  "overall": {
+    "clause_typing": {
+      "tp": 12,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.923,
+      "recall": 0.923,
+      "f1": 0.923
+    },
+    "grounding": {
+      "checked": 13,
+      "grounded": 13,
+      "rate": 1.0
+    },
+    "intent": {
+      "total": 7,
+      "correct": 7,
+      "accuracy": 1.0
+    }
+  },
+  "gold_integrity_problems": [],
+  "fixtures": [
+    {
+      "fixture": "tests/fixtures/clean_nda.txt",
+      "contract_type": {
+        "expected": "NDA",
+        "got": "NDA"
+      },
+      "gold_integrity_problems": [],
+      "clause_typing": {
+        "tp": 5,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.833,
+        "recall": 0.833,
+        "f1": 0.833,
+        "errors": [
+          {
+            "kind": "wrong_clause_type",
+            "source_position": 0,
+            "reported": "confidentiality",
+            "expected": "general",
+            "detail": "Title block and party recital. It imposes no obligation, so it is not a confidentiality clause. This matters beyond bookkeeping: Orchestrator._refine_gaps drops a gap whenever any chunk carries that clause_type, so labelling a preamble 'confidentiality' can mask a genuinely missing confidentiality clause in a contract that has none."
+          }
+        ]
+      },
+      "grounding": {
+        "checked": 6,
+        "grounded": 6,
+        "rate": 1.0,
+        "failures": []
+      },
+      "intent": [
+        {
+          "expected": "confidentiality",
+          "got": "confidentiality",
+          "correct": true,
+          "query": "What are my confidentiality obligations?"
+        },
+        {
+          "expected": "termination",
+          "got": "termination",
+          "correct": true,
+          "query": "What happens when the agreement terminates?"
+        },
+        {
+          "expected": "confidentiality",
+          "got": "confidentiality",
+          "correct": true,
+          "query": "What information is excluded from confidential treatment?"
+        }
+      ]
+    },
+    {
+      "fixture": "tests/fixtures/clean_vendor.txt",
+      "contract_type": {
+        "expected": "vendor",
+        "got": "vendor"
+      },
+      "gold_integrity_problems": [],
+      "clause_typing": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "errors": []
+      },
+      "grounding": {
+        "checked": 7,
+        "grounded": 7,
+        "rate": 1.0,
+        "failures": []
+      },
+      "intent": [
+        {
+          "expected": "payment",
+          "got": "payment",
+          "correct": true,
+          "query": "What are the payment terms and late fees?"
+        },
+        {
+          "expected": "IP",
+          "got": "IP",
+          "correct": true,
+          "query": "Who owns the intellectual property in the deliverables?"
+        },
+        {
+          "expected": "liability",
+          "got": "liability",
+          "correct": true,
+          "query": "What is the cap on liability?"
+        },
+        {
+          "expected": "payment",
+          "got": "payment",
+          "correct": true,
+          "query": "What does the vendor agreement say about fees?"
+        }
+      ]
+    }
+  ]
+}

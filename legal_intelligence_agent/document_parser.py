@@ -968,10 +968,26 @@ class DocumentParser:
 
         return chunks
 
-    def _detect_clause_type(self, text: str) -> str:
-        text_lower = text.lower()
-
-        severance_signals = [
+    # Ordered rules for _detect_clause_type: the first rule whose signals appear
+    # in the chunk wins, so order IS the classifier. It was previously an elif
+    # chain ordered roughly by how common a clause type is, which let broad
+    # types swallow narrower ones that mention them in passing:
+    #
+    #   "LIMITATION OF LIABILITY ... the fees paid or payable"  -> payment
+    #   "EXCLUSIONS ... Confidential Information does not ..."   -> confidentiality
+    #   "RETURN OF MATERIALS ... upon termination of ..."        -> term_and_termination
+    #
+    # Each of those is a specific clause type losing to a general one on an
+    # incidental word, and each was found by evaluation_factual.py. The rules
+    # now run specific-to-general. Signal lists are unchanged; only order is.
+    #
+    # Two orderings are load-bearing and must not be "tidied" alphabetically:
+    #   - indemnification precedes the liability stem rule, because "indemni"
+    #     is a liability signal and would otherwise claim indemnity clauses.
+    #   - the strong IP rule precedes everything, and the broad IP rule ("own",
+    #     "license") stays late, because its signals are common incidental words.
+    CLAUSE_TYPE_RULES = [
+        ("severance", [
             "severance payment",
             "severance pay",
             "release of claims",
@@ -981,15 +997,9 @@ class DocumentParser:
             "good reason",
             "third special award",
             "eip annual award",
-        ]
-
-        if any(s in text_lower
-               for s in severance_signals):
-            return "severance"
-
-        # IP ownership — strongest signals
-        # checked first
-        ip_signals = [
+        ]),
+        # IP ownership — strongest signals checked first
+        ("IP", [
             "ip ownership",
             "patent prosecution",
             "joint invention",
@@ -1006,99 +1016,56 @@ class DocumentParser:
             "owns all inventions",
             "trademark ownership",
             "sublicense",
-        ]
-        if any(signal in text_lower
-               for signal in ip_signals):
-            return "IP"
-
-        if any(
-            s in text_lower
-            for s in [
-                "uptime",
-                "downtime",
-                "system availability",
-                "service level",
-                "unscheduled downtime",
-                "scheduled downtime",
-                "response time",
-                "recovery time",
-            ]
-        ):
-            return "service_level"
-        elif any(
-            s in text_lower
-            for s in [
-                "suspend",
-                "tortious",
-                "criminal activity",
-                "illegal activity",
-                "terms of use",
-                "without notice",
-                "revoke",
-                "disable account",
-                "terminate account",
-            ]
-        ):
-            return "access_suspension"
-        elif any(
-            w in text_lower
-            for w in [
-                "terminat",
-                "expir",
-                "duration",
-                "term ",
-                "survive",
-                "end of",
-            ]
-        ):
-            return "term_and_termination"
-        elif any(
-            w in text_lower
-            for w in [
-                "termination",
-                "terminate",
-                "cancel ",
-                "cancellation",
-                "non-renewal",
-                "resign",
-            ]
-        ):
-            return "termination"
-        elif any(
-            w in text_lower
-            for w in [
-                "confidential",
-                "non-disclosure",
-                "nda",
-                "disclose",
-                "secret",
-            ]
-        ):
-            return "confidentiality"
-        elif any(
-            w in text_lower
-            for w in [
-                "return",
-                "destroy",
-                "destruct",
-                "materials",
-                "copies",
-            ]
-        ):
-            return "return_of_materials"
-        elif any(
-            w in text_lower
-            for w in [
-                "governing law",
-                "jurisdiction",
-                "delaware",
-                "new york",
-                "california",
-                "courts of",
-            ]
-        ):
-            return "governing_law"
-        remedy_signals = [
+        ]),
+        ("service_level", [
+            "uptime",
+            "downtime",
+            "system availability",
+            "service level",
+            "unscheduled downtime",
+            "scheduled downtime",
+            "response time",
+            "recovery time",
+        ]),
+        ("access_suspension", [
+            "suspend",
+            "tortious",
+            "criminal activity",
+            "illegal activity",
+            "terms of use",
+            "without notice",
+            "revoke",
+            "disable account",
+            "terminate account",
+        ]),
+        # Carve-out from an obligation, not the obligation: must beat
+        # confidentiality, which these clauses always mention.
+        ("exclusions", [
+            "exclusion",
+            "exception",
+            "carve",
+            "public domain",
+            "independently develop",
+        ]),
+        # Return/destruction of materials: must beat term_and_termination,
+        # which fires on the incidental "upon termination of discussions".
+        ("return_of_materials", [
+            "return",
+            "destroy",
+            "destruct",
+            "materials",
+            "copies",
+        ]),
+        ("governing_law", [
+            "governing law",
+            "jurisdiction",
+            "delaware",
+            "new york",
+            "california",
+            "courts of",
+        ]),
+        # Remedies read as liability.
+        ("liability", [
             "injunction",
             "equitable relief",
             "specific performance",
@@ -1106,15 +1073,8 @@ class DocumentParser:
             "non-breaching party",
             "legal counsel",
             "enforce",
-        ]
-
-        is_remedy = any(
-            s in text_lower
-            for s in remedy_signals)
-
-        if is_remedy:
-            return "liability"
-        indemnification_signals = [
+        ]),
+        ("indemnification", [
             "indemnif",
             "hold harmless",
             "attorney",
@@ -1123,101 +1083,83 @@ class DocumentParser:
             "fullest extent",
             "officer, director",
             "third.party claim",
-        ]
+        ]),
+        # Liability stems: must beat payment, since a liability cap is almost
+        # always expressed as a multiple of fees paid.
+        ("liability", [
+            "liabilit",
+            "indemni",
+            "damages",
+            "warrant",
+        ]),
+        ("term_and_termination", [
+            "terminat",
+            "expir",
+            "duration",
+            "term ",
+            "survive",
+            "end of",
+        ]),
+        ("confidentiality", [
+            "confidential",
+            "non-disclosure",
+            "nda",
+            "disclose",
+            "secret",
+        ]),
+        ("payment", [
+            "payment",
+            "fee",
+            "invoice",
+            "price",
+            "cost",
+            "royalt",
+        ]),
+        ("IP", [
+            "intellectual property",
+            "ip ",
+            "patent",
+            "copyright",
+            "trademark",
+            "license",
+            "own",
+        ]),
+        ("employment", [
+            "employ",
+            "hire",
+            "salary",
+            "compensation",
+            "benefits",
+        ]),
+        ("non_solicitation", [
+            "solicit",
+            "compete",
+            "non-compete",
+            "non-solicit",
+        ]),
+        ("data_protection", [
+            "data",
+            "privacy",
+            "personal",
+            "gdpr",
+            "ccpa",
+        ]),
+        ("dispute_resolution", [
+            "dispute",
+            "arbitrat",
+            "mediat",
+            "resolution",
+        ]),
+    ]
 
-        if any(s in text_lower
-               for s in indemnification_signals):
-            return "indemnification"
-        elif any(
-            w in text_lower
-            for w in [
-                "payment",
-                "fee",
-                "invoice",
-                "price",
-                "cost",
-                "royalt",
-            ]
-        ):
-            return "payment"
-        elif any(
-            w in text_lower
-            for w in [
-                "intellectual property",
-                "ip ",
-                "patent",
-                "copyright",
-                "trademark",
-                "license",
-                "own",
-            ]
-        ):
-            return "IP"
-        elif any(
-            w in text_lower
-            for w in [
-                "liabilit",
-                "indemni",
-                "damages",
-                "warrant",
-            ]
-        ):
-            return "liability"
-        elif any(
-            w in text_lower
-            for w in [
-                "employ",
-                "hire",
-                "salary",
-                "compensation",
-                "benefits",
-            ]
-        ):
-            return "employment"
-        elif any(
-            w in text_lower
-            for w in [
-                "solicit",
-                "compete",
-                "non-compete",
-                "non-solicit",
-            ]
-        ):
-            return "non_solicitation"
-        elif any(
-            w in text_lower
-            for w in [
-                "data",
-                "privacy",
-                "personal",
-                "gdpr",
-                "ccpa",
-            ]
-        ):
-            return "data_protection"
-        elif any(
-            w in text_lower
-            for w in [
-                "dispute",
-                "arbitrat",
-                "mediat",
-                "resolution",
-            ]
-        ):
-            return "dispute_resolution"
-        elif any(
-            w in text_lower
-            for w in [
-                "exclusion",
-                "exception",
-                "carve",
-                "public domain",
-                "independently develop",
-            ]
-        ):
-            return "exclusions"
-        else:
-            return "general"
+    def _detect_clause_type(self, text: str) -> str:
+        text_lower = text.lower()
+
+        for clause_type, signals in self.CLAUSE_TYPE_RULES:
+            if any(s in text_lower for s in signals):
+                return clause_type
+
+        return "general"
 
     def _load_text_from_path(self, document_path: DocumentSource) -> str:
         p = Path(document_path)

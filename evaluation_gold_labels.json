@@ -10,8 +10,9 @@
     "DocumentParser._detect_clause_type can actually emit, so each one is reachable",
     "and every miss is a real defect rather than a vocabulary mismatch.",
     "",
-    "'acceptable' lists additional labels scored as correct. It is used only where the",
-    "vocabulary itself is genuinely ambiguous, and each use carries a rationale.",
+    "'acceptable' lists additional labels scored as correct, for use where the",
+    "vocabulary itself is genuinely ambiguous. Currently unused: the one ambiguous",
+    "pair it covered was resolved by deleting a dead branch.",
     "",
     "must_contain is a verbatim phrase from that chunk. It checks that a cited",
     "source_position points at the passage the gold label describes, so a citation",
@@ -41,13 +42,13 @@
           "source_position": 2,
           "gold_clause_type": "exclusions",
           "must_contain": "does not include information",
-          "rationale": "Carve-out from the confidentiality obligation, not the obligation itself. The parser has an 'exclusions' category and this text matches two of its signals ('exclusion' in the heading, 'independently develop'), but the 'confidentiality' branch is tested earlier in the same elif chain and wins on the words 'Confidential Information'."
+          "rationale": "Carve-out from the confidentiality obligation, not the obligation itself. Matches two 'exclusions' signals ('exclusion' in the heading, 'independently develop'). Was reported as 'confidentiality' until the exclusions rule was moved ahead of it; it had been losing on the words 'Confidential Information'."
         },
         {
           "source_position": 3,
           "gold_clause_type": "return_of_materials",
           "must_contain": "return or destroy all materials",
-          "rationale": "The subject of the clause is return and destruction of materials. The parser has a 'return_of_materials' category, but 'term_and_termination' is tested earlier and matches on the incidental phrase 'upon termination of discussions'."
+          "rationale": "The subject of the clause is return and destruction of materials. Was reported as 'term_and_termination' until the return_of_materials rule was moved ahead of it; it had been losing on the incidental phrase 'upon termination of discussions'."
         },
         {
           "source_position": 4,
@@ -114,7 +115,7 @@
           "source_position": 4,
           "gold_clause_type": "liability",
           "must_contain": "total liability shall not exceed",
-          "rationale": "Limitation of liability. The parser reaches its 'payment' branch first on 'the fees paid or payable', so a liability cap is reported as a payment clause. This is the most consequential mislabel in either fixture: a user asking about liability exposure is told the contract has no liability clause, while the gap checker simultaneously treats the payment requirement as satisfied."
+          "rationale": "Limitation of liability. Was the most consequential mislabel in either fixture: the 'payment' rule matched 'the fees paid or payable' first, so a liability cap was reported as a payment clause. A user asking about liability exposure was told the contract had no liability clause, while the gap checker simultaneously treated the payment requirement as satisfied. Fixed by moving the liability rules ahead of payment."
         },
         {
           "source_position": 5,
@@ -124,10 +125,9 @@
         },
         {
           "source_position": 6,
-          "gold_clause_type": "termination",
-          "acceptable": ["term_and_termination"],
+          "gold_clause_type": "term_and_termination",
           "must_contain": "terminate for material breach",
-          "rationale": "The vocabulary contains both 'termination' and 'term_and_termination' for the same concept, and the 'termination' branch is unreachable for any text containing 'terminat' because 'term_and_termination' is tested first. Both are accepted so the eval measures classification rather than this dead branch."
+          "rationale": "The vocabulary used to carry both 'termination' and 'term_and_termination' for the same concept, with the 'termination' branch unreachable for any text containing 'terminat'. That dead branch has been removed, so this is now the single label for the concept and no alternative needs accepting."
         }
       ],
 
@@ -147,7 +147,7 @@
         {
           "query": "What does the vendor agreement say about fees?",
           "expected_intent": "payment",
-          "rationale": "A question about fees. Expected to fail today: the classifier tests its termination branch first and matches the substring 'end' inside 'vendor', so the query is routed to termination. Kept in the set deliberately as a known-failing case."
+          "rationale": "A question about fees. Added as a known-failing case: the classifier matched the substring 'end' inside 'vendor' and routed every vendor question to termination. Fixed by boundary-anchored signal matching; kept as the regression test for it."
         }
       ]
     }

@@ -270,26 +270,65 @@ loudly if the fixtures change.
 
 Measured (mock client, deterministic):
 
-    Clause typing  P 0.692  R 0.692
-                   F1 0.692
-                   (tp 9, fp 4, fn 4)
-    Grounding      13/13   (100%)
-    Intent         6/7     (86%)
+                     before    after
+    Clause typing  P  0.692    0.923
+                   R  0.692    0.923
+                   F1 0.692    0.923
+                      tp 9     tp 12
+                      fp 4     fp 1
+                      fn 4     fn 1
+    Grounding         13/13    13/13
+    Intent            6/7      7/7
+
+    before: logs/eval_factual_
+            20261102_144318.json
+    after:  logs/eval_factual_
+            20261102_145716.json
 
 Unlike the 30/30 suite, this one
-reports real defects. All four clause
-typing failures are elif-ordering bugs
-in DocumentParser._detect_clause_type:
-a limitation-of-liability clause is
-reported as "payment" because it
-mentions "fees paid or payable"; an
-EXCLUSIONS carve-out is reported as
+reported real defects, and the "after"
+column is what fixing them looks like.
+
+Three of the five were first-match
+ordering bugs: a specific clause type
+losing to a broader one that the text
+mentions only in passing. A
+limitation-of-liability clause was
+reported as "payment" because it says
+"fees paid or payable"; an EXCLUSIONS
+carve-out was reported as
 "confidentiality"; a RETURN OF
-MATERIALS clause is reported as
-"term_and_termination". The intent miss
-routes a question about fees to
-"termination" because "vendor" contains
-the substring "end".
+MATERIALS clause was reported as
+"term_and_termination". The elif chain
+in _detect_clause_type is now an
+explicit ordered rule table
+(CLAUSE_TYPE_RULES) running
+specific-to-general, with the
+orderings that matter commented. The
+dead "termination" branch, unreachable
+because "term_and_termination" matched
+"terminat" first, was removed.
+
+The intent miss routed every question
+mentioning a vendor to "termination",
+because the signal "end" matched inside
+"vendor". Signal matching is now
+boundary-anchored
+(legal_intelligence_agent/
+text_signals.py): "end" still matches
+end / ends / ending, but not vendor,
+and "own" no longer matches inside
+"unknown".
+
+One mislabel remains, deliberately: the
+NDA title block is still reported as
+"confidentiality" because it contains
+the words "Non-Disclosure Agreement".
+No rule ordering fixes that — it needs
+a notion of "this chunk states no
+obligation" — so it stays visible in
+the score rather than being rounded
+away.
 
 Baselines are recorded in
 evaluation_factual.BASELINE so --strict
@@ -304,8 +343,8 @@ claims to catch, including a fabricated
 
 ## Test Results
 
-132 / 132 unit tests passing
-(109 pipeline + 23 covering the
+133 / 133 unit tests passing
+(109 pipeline + 24 covering the
 factual correctness eval)
 
 ---
@@ -351,6 +390,6 @@ Project 2 — Done: evaluation
   framework + approval gate
 Project 3 — Done: 4-agent
   sequential pipeline +
-  jurisdiction + date context + 132 tests
+  jurisdiction + date context + 133 tests
 
 ---

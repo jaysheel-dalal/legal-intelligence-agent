@@ -8,6 +8,7 @@ import numpy as np
 from datetime import datetime
 
 from agents.orchestrator import Orchestrator
+from legal_intelligence_agent.text_signals import any_signal
 
 
 class MockLLMClient:
@@ -39,7 +40,7 @@ class MockLLMClient:
         words = q.split()
         truly_vague = (
             len(words) <= 2 and
-            not any(keyword in q for keyword in [
+            not any_signal(q, [
                 "contract", "agreement", "clause",
                 "terminate", "payment", "liable",
                 "confidential", "ip", "license",
@@ -69,39 +70,39 @@ class MockLLMClient:
             }
 
         # Intent detection
-        if any(w in q for w in [
+        if any_signal(q, [
             "terminat", "resign", "notice",
             "end", "cancel", "exit",
         ]):
             intent = "termination"
-        elif any(w in q for w in [
+        elif any_signal(q, [
             "breach", "violat", "break",
             "fail", "default",
         ]):
             intent = "breach"
-        elif any(w in q for w in [
+        elif any_signal(q, [
             "payment", "pay", "fee", "invoice",
             "cost", "price", "royalt",
         ]):
             intent = "payment"
-        elif any(w in q for w in [
+        elif any_signal(q, [
             "data", "privacy", "personal",
             "gdpr", "ccpa", "breach",
         ]):
             intent = "data"
-        elif any(w in q for w in [
+        elif any_signal(q, [
             "ip", "intellectual", "property",
             "own", "copyright", "patent",
             "trademark", "license", "licens",
         ]):
             intent = "IP"
-        elif any(w in q for w in [
+        elif any_signal(q, [
             "employ", "employee", "employer",
             "hire", "fire", "salary", "wage",
             "non-compete", "non-solicit",
         ]):
             intent = "employment"
-        elif any(w in q for w in [
+        elif any_signal(q, [
             "confidential", "secret", "disclose",
             "nda", "non-disclosure",
         ]):

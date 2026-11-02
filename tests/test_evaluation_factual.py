@@ -9,9 +9,7 @@ do two jobs:
     that silently degrades clause typing, grounding, or intent breaks CI
 """
 
-import inspect
 import json
-import re
 
 import pytest
 
@@ -32,9 +30,12 @@ def nda_chunks():
 
 
 def _emittable_clause_types():
-    """Clause-type labels DocumentParser._detect_clause_type can actually return."""
-    src = inspect.getsource(DocumentParser._detect_clause_type)
-    return set(re.findall(r'return "([A-Za-z_]+)"', src))
+    """Clause-type labels DocumentParser._detect_clause_type can actually return.
+
+    Read from the rule table rather than scraped out of the function source, so
+    this keeps working when the matching code is restructured.
+    """
+    return {t for t, _ in DocumentParser.CLAUSE_TYPE_RULES} | {"general"}
 
 
 class TestGoldLabelIntegrity:
@@ -249,43 +250,82 @@ class TestEndToEnd:
         """Pin the numbers quoted in the README so they cannot drift unnoticed."""
         overall = report["overall"]
         assert overall["clause_typing"] == {
-            "tp": 9,
-            "fp": 4,
-            "fn": 4,
-            "precision": 0.692,
-            "recall": 0.692,
-            "f1": 0.692,
+            "tp": 12,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.923,
+            "recall": 0.923,
+            "f1": 0.923,
         }
         assert overall["grounding"] == {"checked": 13, "grounded": 13, "rate": 1.0}
-        assert overall["intent"] == {"total": 7, "correct": 6, "accuracy": 0.857}
+        assert overall["intent"] == {"total": 7, "correct": 7, "accuracy": 1.0}
 
-    def test_known_defects_are_still_reported(self, report):
-        """The eval must keep naming the specific mislabels, not just a score."""
-        errors = [
+    @staticmethod
+    def _mislabels(report):
+        return [
             (f["fixture"], e["source_position"], e["reported"], e["expected"])
             for f in report["fixtures"]
             for e in f["clause_typing"]["errors"]
             if e["kind"] == "wrong_clause_type"
         ]
-        assert ("tests/fixtures/clean_vendor.txt", 4, "payment", "liability") in errors
-        assert ("tests/fixtures/clean_nda.txt", 2, "confidentiality", "exclusions") in errors
+
+    def test_reordering_defects_stay_fixed(self, report):
+        """The three elif-ordering mislabels must not come back.
+
+        Each was a specific clause type losing to a broader one that the text
+        mentions in passing. Reordering CLAUSE_TYPE_RULES fixed them; this
+        fails if anything re-sorts those rules.
+        """
+        mislabels = self._mislabels(report)
+        assert (
+            "tests/fixtures/clean_vendor.txt",
+            4,
+            "payment",
+            "liability",
+        ) not in mislabels, "liability cap misread as payment again"
+        assert (
+            "tests/fixtures/clean_nda.txt",
+            2,
+            "confidentiality",
+            "exclusions",
+        ) not in mislabels, "exclusions carve-out misread as confidentiality again"
         assert (
             "tests/fixtures/clean_nda.txt",
             3,
             "term_and_termination",
             "return_of_materials",
-        ) in errors
+        ) not in mislabels, "return-of-materials misread as termination again"
 
-    def test_known_intent_failure_is_still_reported(self, report):
+    def test_remaining_known_defect_is_the_preamble(self, report):
+        """One mislabel is left, and it is not an ordering problem.
+
+        The NDA title block is reported as confidentiality because it contains
+        the words "Non-Disclosure Agreement". No rule ordering fixes that; it
+        needs a notion of "this chunk states no obligation". Asserted so the
+        remaining gap stays visible rather than being rounded away.
+        """
+        assert self._mislabels(report) == [
+            ("tests/fixtures/clean_nda.txt", 0, "confidentiality", "general")
+        ]
+
+    def test_vendor_substring_intent_bug_stays_fixed(self, report):
+        """"vendor" contains "end"; it must not route to termination again."""
         misses = [
             i
             for f in report["fixtures"]
             for i in f["intent"]
             if not i["correct"]
         ]
-        assert len(misses) == 1
-        assert misses[0]["expected"] == "payment"
-        assert misses[0]["got"] == "termination"
+        assert misses == [], f"intent regressions: {misses}"
+
+        vendor_query = [
+            i
+            for f in report["fixtures"]
+            for i in f["intent"]
+            if "vendor agreement" in i["query"]
+        ]
+        assert len(vendor_query) == 1
+        assert vendor_query[0]["got"] == "payment"
 
     def test_strict_mode_passes_at_baseline(self, report):
         assert ef.check_regressions(report) == []

@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Optional
 
+from legal_intelligence_agent.text_signals import any_signal, count_signals
+
 
 class ClassificationError(Exception):
     pass
@@ -163,13 +165,12 @@ class QueryIntentClassifier:
             ],
         }
 
-        # Score each intent
+        # Score each intent. Word-boundary matching, so "end" does not score
+        # the termination intent for a question about a vendor.
         scores = {}
         for intent, signals in (
                 intent_signals.items()):
-            score = sum(
-                1 for s in signals
-                if s in q)
+            score = count_signals(q, signals)
             if score > 0:
                 scores[intent] = score
 
@@ -265,8 +266,7 @@ class QueryIntentClassifier:
             intent_signals.values()
             for s in signals]
 
-        has_intent = any(
-            s in q for s in all_signals)
+        has_intent = any_signal(q, all_signals)
 
         if "contract" in q or "agreement" in q:
             has_intent = True
