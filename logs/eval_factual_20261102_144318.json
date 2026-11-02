@@ -1,0 +1,151 @@
+{
+  "timestamp": "2026-11-02T14:43:18.293527",
+  "suite": "factual_correctness",
+  "mode": "mock",
+  "gold_labels": "evaluation_gold_labels.json",
+  "overall": {
+    "clause_typing": {
+      "tp": 9,
+      "fp": 4,
+      "fn": 4,
+      "precision": 0.692,
+      "recall": 0.692,
+      "f1": 0.692
+    },
+    "grounding": {
+      "checked": 13,
+      "grounded": 13,
+      "rate": 1.0
+    },
+    "intent": {
+      "total": 7,
+      "correct": 6,
+      "accuracy": 0.857
+    }
+  },
+  "gold_integrity_problems": [],
+  "fixtures": [
+    {
+      "fixture": "tests/fixtures/clean_nda.txt",
+      "contract_type": {
+        "expected": "NDA",
+        "got": "NDA"
+      },
+      "gold_integrity_problems": [],
+      "clause_typing": {
+        "tp": 3,
+        "fp": 3,
+        "fn": 3,
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5,
+        "errors": [
+          {
+            "kind": "wrong_clause_type",
+            "source_position": 0,
+            "reported": "confidentiality",
+            "expected": "general",
+            "detail": "Title block and party recital. It imposes no obligation, so it is not a confidentiality clause. This matters beyond bookkeeping: Orchestrator._refine_gaps drops a gap whenever any chunk carries that clause_type, so labelling a preamble 'confidentiality' can mask a genuinely missing confidentiality clause in a contract that has none."
+          },
+          {
+            "kind": "wrong_clause_type",
+            "source_position": 2,
+            "reported": "confidentiality",
+            "expected": "exclusions",
+            "detail": "Carve-out from the confidentiality obligation, not the obligation itself. The parser has an 'exclusions' category and this text matches two of its signals ('exclusion' in the heading, 'independently develop'), but the 'confidentiality' branch is tested earlier in the same elif chain and wins on the words 'Confidential Information'."
+          },
+          {
+            "kind": "wrong_clause_type",
+            "source_position": 3,
+            "reported": "term_and_termination",
+            "expected": "return_of_materials",
+            "detail": "The subject of the clause is return and destruction of materials. The parser has a 'return_of_materials' category, but 'term_and_termination' is tested earlier and matches on the incidental phrase 'upon termination of discussions'."
+          }
+        ]
+      },
+      "grounding": {
+        "checked": 6,
+        "grounded": 6,
+        "rate": 1.0,
+        "failures": []
+      },
+      "intent": [
+        {
+          "expected": "confidentiality",
+          "got": "confidentiality",
+          "correct": true,
+          "query": "What are my confidentiality obligations?"
+        },
+        {
+          "expected": "termination",
+          "got": "termination",
+          "correct": true,
+          "query": "What happens when the agreement terminates?"
+        },
+        {
+          "expected": "confidentiality",
+          "got": "confidentiality",
+          "correct": true,
+          "query": "What information is excluded from confidential treatment?"
+        }
+      ]
+    },
+    {
+      "fixture": "tests/fixtures/clean_vendor.txt",
+      "contract_type": {
+        "expected": "vendor",
+        "got": "vendor"
+      },
+      "gold_integrity_problems": [],
+      "clause_typing": {
+        "tp": 6,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.857,
+        "recall": 0.857,
+        "f1": 0.857,
+        "errors": [
+          {
+            "kind": "wrong_clause_type",
+            "source_position": 4,
+            "reported": "payment",
+            "expected": "liability",
+            "detail": "Limitation of liability. The parser reaches its 'payment' branch first on 'the fees paid or payable', so a liability cap is reported as a payment clause. This is the most consequential mislabel in either fixture: a user asking about liability exposure is told the contract has no liability clause, while the gap checker simultaneously treats the payment requirement as satisfied."
+          }
+        ]
+      },
+      "grounding": {
+        "checked": 7,
+        "grounded": 7,
+        "rate": 1.0,
+        "failures": []
+      },
+      "intent": [
+        {
+          "expected": "payment",
+          "got": "payment",
+          "correct": true,
+          "query": "What are the payment terms and late fees?"
+        },
+        {
+          "expected": "IP",
+          "got": "IP",
+          "correct": true,
+          "query": "Who owns the intellectual property in the deliverables?"
+        },
+        {
+          "expected": "liability",
+          "got": "liability",
+          "correct": true,
+          "query": "What is the cap on liability?"
+        },
+        {
+          "expected": "payment",
+          "got": "termination",
+          "correct": false,
+          "query": "What does the vendor agreement say about fees?"
+        }
+      ]
+    }
+  ]
+}

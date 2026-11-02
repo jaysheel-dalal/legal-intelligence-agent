@@ -160,8 +160,9 @@ Set API key (Windows PowerShell):
 Run the web interface:
     streamlit run app.py
 
-Run evaluation suite:
+Run evaluation suites:
     python evaluation_v3.py
+    python evaluation_factual.py
 
 Run unit tests:
     pytest --tb=short -q
@@ -173,22 +174,139 @@ Run with mock (no API key needed):
 
 ---
 
-## Evaluation Results
+## Evaluation Results (structural)
 
-    Total: 30/30 (100%)
-    Happy Path:      8/8   (100%)
-    Exceptions:      4/4   (100%)
-    Edge Cases:      4/4   (100%)
-    Adversarial:     4/4   (100%)
-    Premortem Risk:  10/10 (100%)
-    Avg latency:     56.5 seconds
-    Total cost:      ~$2.16 per full run
+evaluation_v3.py runs 30 scenarios
+across five zones: Happy Path (8),
+Exceptions (4), Edge Cases (4),
+Adversarial (4), Premortem Risk (10).
+
+What it checks is structural, not
+factual. Per scenario:
+
+- the detected contract type matches
+- total_clauses_found meets a minimum
+  (which is 0 for 16 of the 30, making
+  the check a no-op for those)
+- the report text is non-empty
+- no phrase from an unsafe-response
+  blocklist appears
+
+A scenario therefore passes on output
+that is confidently wrong, so long as
+it is well-formed. Each scenario also
+defines expected_intent, which
+score_scenario never reads. For
+correctness measures, see Factual
+Correctness Evaluation below.
+
+What the committed logs actually show:
+
+    logs/eval_v3_20260502_133442.json
+    logs/eval_v3_20260502_135207.json
+
+    Live Claude · 20 scenarios · 19/20
+    (95%)
+
+    Happy Path:   7/8
+    Exceptions:   4/4
+    Edge Cases:   4/4
+    Adversarial:  4/4
+
+    Failure: V3-HP-03 (IP ownership
+    terms on an IP licensing agreement)
+
+Both logs predate the 10 Premortem Risk
+scenarios, which have no committed run
+of their own. No 30-scenario live run is
+logged in this repo, so the 30/30 figure
+previously quoted here was not
+reproducible from the committed
+evidence.
+
+---
+
+## Factual Correctness Evaluation
+
+    python evaluation_factual.py            (mock, no API key)
+    python evaluation_factual.py --strict   (exit 1 on regression)
+    python evaluation_factual.py --live     (real Claude, costs money)
+
+The suite above counts scenarios that
+produced plausible-looking output. It
+checks contract type, a minimum clause
+count, non-empty text, and a blocklist
+of unsafe phrases — all of which pass
+for output that is confidently wrong.
+Its per-scenario expected_intent is
+never read.
+
+evaluation_factual.py scores whether
+the output is true, against gold labels
+in evaluation_gold_labels.json written
+by hand for the committed fixtures
+(tests/fixtures/*.txt, not contracts/*,
+which is gitignored and so cannot be
+reproduced or run in CI).
+
+Three measures:
+
+1. Clause typing — precision / recall /
+   F1 over (source_position,
+   clause_type) pairs.
+2. Source grounding — every cited
+   source_position must exist, the
+   quoted clause text must actually
+   appear at it, and that passage must
+   match the gold anchor phrase.
+3. Intent — expected_intent compared
+   against the pipeline's intent.
+
+A fourth check validates the gold
+labels themselves: every anchor phrase
+must still appear in the chunk it
+describes, so the ground truth fails
+loudly if the fixtures change.
+
+Measured (mock client, deterministic):
+
+    Clause typing  P 0.692  R 0.692
+                   F1 0.692
+                   (tp 9, fp 4, fn 4)
+    Grounding      13/13   (100%)
+    Intent         6/7     (86%)
+
+Unlike the 30/30 suite, this one
+reports real defects. All four clause
+typing failures are elif-ordering bugs
+in DocumentParser._detect_clause_type:
+a limitation-of-liability clause is
+reported as "payment" because it
+mentions "fees paid or payable"; an
+EXCLUSIONS carve-out is reported as
+"confidentiality"; a RETURN OF
+MATERIALS clause is reported as
+"term_and_termination". The intent miss
+routes a question about fees to
+"termination" because "vendor" contains
+the substring "end".
+
+Baselines are recorded in
+evaluation_factual.BASELINE so --strict
+fails on regression rather than on
+these known defects.
+tests/test_evaluation_factual.py proves
+each scorer rejects the failure it
+claims to catch, including a fabricated
+"Section 99" citation.
 
 ---
 
 ## Test Results
 
-109 / 109 unit tests passing
+132 / 132 unit tests passing
+(109 pipeline + 23 covering the
+factual correctness eval)
 
 ---
 
@@ -233,6 +351,6 @@ Project 2 — Done: evaluation
   framework + approval gate
 Project 3 — Done: 4-agent
   sequential pipeline +
-  jurisdiction + date context + 109 tests
+  jurisdiction + date context + 132 tests
 
 ---

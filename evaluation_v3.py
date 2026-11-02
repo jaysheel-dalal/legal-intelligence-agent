@@ -147,8 +147,15 @@ scenarios = [
         "contract": "contracts/Supply agreement.pdf",
         "query": "What are the governing law and jurisdiction terms?",
         "expected_type": "vendor",
-        "expected_intent": "governing_law",
+        "expected_intent": "liability",
         "expected_min_clauses": 0,
+        "note": "Was expected_intent 'governing_law', which no input can "
+                "produce: the intent vocabulary is termination, breach, "
+                "payment, data, IP, employment, liability, confidentiality. "
+                "A governing-law query falls to the 'liability' default, so "
+                "that is the satisfiable expectation. governing_law exists as "
+                "a clause_type but not as an intent -- the gap is in the "
+                "vocabulary, not in this scenario.",
     },
     {
         "id": "V3-EC-04",

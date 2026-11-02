@@ -1,0 +1,155 @@
+{
+  "_about": [
+    "Ground truth for evaluation_factual.py.",
+    "",
+    "Labels are anchored to tests/fixtures/*.txt rather than contracts/*.pdf because",
+    "contracts/ is gitignored: an eval nobody else can reproduce is not an eval.",
+    "",
+    "gold_clause_type is what a correct system should report for that chunk, NOT what",
+    "the current pipeline reports. Every label is drawn from the vocabulary that",
+    "DocumentParser._detect_clause_type can actually emit, so each one is reachable",
+    "and every miss is a real defect rather than a vocabulary mismatch.",
+    "",
+    "'acceptable' lists additional labels scored as correct. It is used only where the",
+    "vocabulary itself is genuinely ambiguous, and each use carries a rationale.",
+    "",
+    "must_contain is a verbatim phrase from that chunk. It checks that a cited",
+    "source_position points at the passage the gold label describes, so a citation",
+    "cannot pass by pointing at the wrong section of the right document."
+  ],
+
+  "fixtures": [
+    {
+      "fixture": "tests/fixtures/clean_nda.txt",
+      "gold_contract_type": "NDA",
+      "coverage_query": "What are my confidentiality obligations?",
+
+      "clauses": [
+        {
+          "source_position": 0,
+          "gold_clause_type": "general",
+          "must_contain": "entered into by and between",
+          "rationale": "Title block and party recital. It imposes no obligation, so it is not a confidentiality clause. This matters beyond bookkeeping: Orchestrator._refine_gaps drops a gap whenever any chunk carries that clause_type, so labelling a preamble 'confidentiality' can mask a genuinely missing confidentiality clause in a contract that has none."
+        },
+        {
+          "source_position": 1,
+          "gold_clause_type": "confidentiality",
+          "must_contain": "keep all Confidential Information strictly confidential",
+          "rationale": "The operative confidentiality obligation."
+        },
+        {
+          "source_position": 2,
+          "gold_clause_type": "exclusions",
+          "must_contain": "does not include information",
+          "rationale": "Carve-out from the confidentiality obligation, not the obligation itself. The parser has an 'exclusions' category and this text matches two of its signals ('exclusion' in the heading, 'independently develop'), but the 'confidentiality' branch is tested earlier in the same elif chain and wins on the words 'Confidential Information'."
+        },
+        {
+          "source_position": 3,
+          "gold_clause_type": "return_of_materials",
+          "must_contain": "return or destroy all materials",
+          "rationale": "The subject of the clause is return and destruction of materials. The parser has a 'return_of_materials' category, but 'term_and_termination' is tested earlier and matches on the incidental phrase 'upon termination of discussions'."
+        },
+        {
+          "source_position": 4,
+          "gold_clause_type": "term_and_termination",
+          "must_contain": "continues for two (2) years",
+          "rationale": "Duration and survival."
+        },
+        {
+          "source_position": 5,
+          "gold_clause_type": "governing_law",
+          "must_contain": "laws of the State of California",
+          "rationale": "Choice of law."
+        }
+      ],
+
+      "queries": [
+        {
+          "query": "What are my confidentiality obligations?",
+          "expected_intent": "confidentiality"
+        },
+        {
+          "query": "What happens when the agreement terminates?",
+          "expected_intent": "termination"
+        },
+        {
+          "query": "What information is excluded from confidential treatment?",
+          "expected_intent": "confidentiality",
+          "rationale": "'exclusions' is a clause type but not an intent, so confidentiality is the correct label in the intent vocabulary."
+        }
+      ]
+    },
+
+    {
+      "fixture": "tests/fixtures/clean_vendor.txt",
+      "gold_contract_type": "vendor",
+      "coverage_query": "What are the payment terms and late fees?",
+
+      "clauses": [
+        {
+          "source_position": 0,
+          "gold_clause_type": "general",
+          "must_contain": "entered into by and between",
+          "rationale": "Title block and party recital."
+        },
+        {
+          "source_position": 1,
+          "gold_clause_type": "general",
+          "must_contain": "Statement of Work",
+          "rationale": "Scope-of-services clause. DocumentParser._detect_clause_type has no 'services' category, so 'general' is the most accurate label available. Recorded as a vocabulary gap, not a classifier error: a correct system cannot do better here without a new category."
+        },
+        {
+          "source_position": 2,
+          "gold_clause_type": "payment",
+          "must_contain": "Invoices are due within thirty (30) days",
+          "rationale": "Fees, invoicing, and late interest."
+        },
+        {
+          "source_position": 3,
+          "gold_clause_type": "IP",
+          "must_contain": "Background Intellectual Property",
+          "rationale": "Ownership of background IP and deliverables."
+        },
+        {
+          "source_position": 4,
+          "gold_clause_type": "liability",
+          "must_contain": "total liability shall not exceed",
+          "rationale": "Limitation of liability. The parser reaches its 'payment' branch first on 'the fees paid or payable', so a liability cap is reported as a payment clause. This is the most consequential mislabel in either fixture: a user asking about liability exposure is told the contract has no liability clause, while the gap checker simultaneously treats the payment requirement as satisfied."
+        },
+        {
+          "source_position": 5,
+          "gold_clause_type": "indemnification",
+          "must_contain": "indemnify Customer for third-party claims",
+          "rationale": "IP indemnity."
+        },
+        {
+          "source_position": 6,
+          "gold_clause_type": "termination",
+          "acceptable": ["term_and_termination"],
+          "must_contain": "terminate for material breach",
+          "rationale": "The vocabulary contains both 'termination' and 'term_and_termination' for the same concept, and the 'termination' branch is unreachable for any text containing 'terminat' because 'term_and_termination' is tested first. Both are accepted so the eval measures classification rather than this dead branch."
+        }
+      ],
+
+      "queries": [
+        {
+          "query": "What are the payment terms and late fees?",
+          "expected_intent": "payment"
+        },
+        {
+          "query": "Who owns the intellectual property in the deliverables?",
+          "expected_intent": "IP"
+        },
+        {
+          "query": "What is the cap on liability?",
+          "expected_intent": "liability"
+        },
+        {
+          "query": "What does the vendor agreement say about fees?",
+          "expected_intent": "payment",
+          "rationale": "A question about fees. Expected to fail today: the classifier tests its termination branch first and matches the substring 'end' inside 'vendor', so the query is routed to termination. Kept in the set deliberately as a known-failing case."
+        }
+      ]
+    }
+  ]
+}

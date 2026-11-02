@@ -26,3 +26,6 @@ package-lock.json
 # Environment
 .env
 *.env
+
+# Factual eval run scratch (traces regenerate on every run)
+logs/factual/
